@@ -1,3 +1,37 @@
+function adminCard() {
+  const adminTela = document.getElementById("admin");
+  const adminButton = document.getElementsByClassName("adminCardOpt")[0];
+  const hiddenEls = document.getElementsByClassName("hidden");
+
+  // adiciona animação de saída
+  adminTela.classList.remove("fade-inX");
+  adminTela.classList.add("fade-outX");
+
+  setTimeout(() => {
+    if (adminButton.style.display !== "none") {
+      // esconde botão, mostra os hidden
+      adminButton.style.display = "none";
+      for (let i = 0; i < hiddenEls.length; i++) {
+        hiddenEls[i].style.display = "block";
+      }
+    } else {
+      // mostra botão, esconde os hidden
+      adminButton.style.display = "block";
+      for (let i = 0; i < hiddenEls.length; i++) {
+        hiddenEls[i].style.display = "none";
+      }
+    }
+
+    // animação de entrada
+    adminTela.classList.remove("fade-outX");
+    adminTela.classList.add("fade-inX");
+
+    // limpa a classe depois da animação
+    setTimeout(() => {
+      adminTela.classList.remove("fade-inX");
+    }, 400);
+  }, 400);
+}
 
 async function salvarBairro() {
   const nome = document.getElementById("bairro-nome").value;
@@ -5,7 +39,7 @@ async function salvarBairro() {
   const lon = parseFloat(document.getElementById("bairro-lon").value);
 
   if (!nome || isNaN(lat) || isNaN(lon)) {
-    showAlert("Preencha todos os campos!", "error", 3000);
+    alert("Preencha todos os campos!");
   }
 
   const res = await fetch("http://localhost:8080/auth/bairros", {
