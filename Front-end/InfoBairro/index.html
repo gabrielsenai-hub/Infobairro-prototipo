@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InfoBairro</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="icon" href="./img/Logo.png" />
+  </head>
+  <body>
+    <header>
+      <div id="caixa">
+        <div id="logo">
+          <img src="./img/Logo.png" alt="Logo site" />
+          <p>
+            <span class="corLogo">I</span>nfo<span class="corLogo">B</span>airro
+          </p>
+        </div>
+        <nav class="login">
+          <ul>
+            <li>
+              <button id="cadastrar" class="acesso" onclick="cadastrarTela()">
+                Cadastre-se
+              </button>
+            </li>
+            <li>
+              <button id="entrar" class="acesso" onclick="loginTela()">
+                Login
+              </button>
+            </li>
+            <li>
+              <button class="acesso" id="voltar" onclick="voltarInicio()">
+                Voltar
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section id="container">
+      <div id="map"></div>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    </section>
+    
+    <div id="customAlert" class="custom-alert">
+      <span id="alertMessage"></span>
+    </div>
+
+    <script src="./js/script.js"></script>
+  </body>
+</html>
