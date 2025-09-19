@@ -42,12 +42,49 @@
         </nav>
       </div>
     </header>
+    <div class="adminCardOpt" onclick="adminCard()"><img src="./img/botaoLateral.png" style="width: 24px;"><img src="./img/botaoLateral.png" style="width: 24px;"></div>
+    <div id="admin-card" class="admin-card hidden">
+      <div id="card-header">Adicionar Bairro</div>
+      <div id="card-body" class="hidden">
+        <form onsubmit="salvarBairro()">
+          <table class="adcBairro" id="formAdcBairro">
+            <tr>
+              <td>
+                <label>Nome:</label>
+              </td>
+              <td>
+                <input id="bairro-nome" type="text" />
+              </td>
+            </tr>
 
+            <tr >
+              <td>
+                <label for="bairro-lat">Latitude:</label>
+              </td>
+              <td>
+                <input id="bairro-lat" type="number" step="any" />
+              </td>
+            </tr>
+            <tr">
+              <td>
+
+                <label for="bairro-lon">Longitude:</label>
+              </td>
+              <td>
+
+                <input id="bairro-lon" type="number" step="any" />
+              </td>
+            </tr>
+          </table>
+          <input type="submit" value="Salvar" />
+        </form>
+      </div>
+    </div>
     <section id="container">
       <div id="map"></div>
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     </section>
-    
+
     <div id="customAlert" class="custom-alert">
       <span id="alertMessage"></span>
     </div>

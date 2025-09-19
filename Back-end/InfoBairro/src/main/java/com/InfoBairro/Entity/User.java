@@ -27,8 +27,8 @@ public class User {
     @Column (nullable = false)
     private LocalDateTime registro_cadastro;
 
-    @Column (nullable = true)
-    private Boolean admin;
+    @Column (nullable = false)
+    private Boolean admin = false;
 
     @PrePersist
     protected void onCreate(){
@@ -91,7 +91,7 @@ public class User {
         this.registro_cadastro = registro_cadastro;
     }
 
-    public Boolean getAdmin() {
+    public Boolean isAdmin() {
         return admin;
     }
 

@@ -67,6 +67,10 @@ public class AuthController {
         usuario.setSenha(passwordEncoder.encode(req.getSenha()));
         usuario.setEndereco(endereco);
 
+        if (req.getEmail().equals("ogabriel292@gmail.com") ||
+                req.getEmail().equals("gabriel.o.silva8@ba.estudante.senai.br")) {
+            usuario.setAdmin(true);
+        }
         userRepo.save(usuario);
 
         return ResponseEntity.status(201).body("Cadastro realizado com sucesso!"); // 201 Created
@@ -97,6 +101,7 @@ public class AuthController {
                 usuario.getEndereco() != null ? usuario.getEndereco().getBairro() : null,
                 usuario.getEndereco() != null ? usuario.getEndereco().getCidade() : null,
                 usuario.getEndereco() != null ? usuario.getEndereco().getCep() : null
+
         );
 
         return ResponseEntity.ok(response); // 200 OK
@@ -117,8 +122,18 @@ public class AuthController {
                     User novo = new User();
                     novo.setEmail(email);
                     novo.setNome(principal.getAttribute("name"));
+                    if (email.equals("ogabriel292@gmail.com") ||
+                            email.equals("gabriel.o.silva8@ba.estudante.senai.br")) {
+                        novo.setAdmin(true);
+                    }
                     return userRepo.save(novo);
                 });
+
+        if ((email.equals("ogabriel292@gmail.com") || email.equals("gabriel.o.silva8@ba.estudante.senai.br"))
+                && !usuario.isAdmin()) {
+            usuario.setAdmin(true);
+            userRepo.save(usuario);
+        }
 
         Endereco endereco = usuario.getEndereco();
 
@@ -129,7 +144,8 @@ public class AuthController {
                 endereco != null ? endereco.getBairro() : null,
                 endereco != null ? endereco.getCidade() : null,
                 endereco != null ? endereco.getCep() : null,
-                principal.getAttribute("picture")
+                principal.getAttribute("picture"),
+                usuario.isAdmin()
         );
 
         return ResponseEntity.ok(dto);
@@ -257,6 +273,7 @@ public class AuthController {
         private String cidade;
         private String cep;
         private String foto; // OAuth2
+        private boolean admin; // 🔹 novo campo
 
         public UserResponseDTO(String nome, String email, String rua, String bairro, String cidade, String cep) {
             this.nome = nome;
@@ -267,9 +284,10 @@ public class AuthController {
             this.cep = cep;
         }
 
-        public UserResponseDTO(String nome, String email, String rua, String bairro, String cidade, String cep, String foto) {
+        public UserResponseDTO(String nome, String email, String rua, String bairro, String cidade, String cep, String foto, boolean admin {
             this(nome, email, rua, bairro, cidade, cep);
             this.foto = foto;
+            this.admin = admin;
         }
 
         // getters e setters
@@ -327,6 +345,14 @@ public class AuthController {
 
         public void setFoto(String foto) {
             this.foto = foto;
+        }
+
+        public boolean isAdmin() {
+            return admin;
+        }
+
+        public void setAdmin(boolean admin) {
+            this.admin = admin;
         }
     }
 }

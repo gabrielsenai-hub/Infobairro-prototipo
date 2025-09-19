@@ -1,5 +1,28 @@
-function loginWithGoogle() {
 
+async function salvarBairro() {
+  const nome = document.getElementById("bairro-nome").value;
+  const lat = parseFloat(document.getElementById("bairro-lat").value);
+  const lon = parseFloat(document.getElementById("bairro-lon").value);
+
+  if (!nome || isNaN(lat) || isNaN(lon)) {
+    showAlert("Preencha todos os campos!", "error", 3000);
+  }
+
+  const res = await fetch("http://localhost:8080/auth/bairros", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nome, latitude: lat, longitude: lon }),
+  });
+
+  if (res.ok) {
+    showAlert("Bairro adicionado!", "success", 3000);
+    // Opcional: adicionar marker no mapa
+    L.marker([lat, lon]).addTo(map).bindPopup(nome);
+  } else {
+    showAlert("Erro ao salvar bairro", "error", 3000);
+  }
+}
+function loginWithGoogle() {
   const largura = 500;
   const altura = 600;
   const left = screen.width / 2 - largura / 2;
@@ -7,7 +30,7 @@ function loginWithGoogle() {
 
   const oauthUrl = "http://localhost:8080/oauth2/authorization/google";
   // essa é a URL que inicia o fluxo OAuth2 no seu backend
-  
+
   const janela = window.open(
     oauthUrl,
     "Login com Google",
@@ -99,12 +122,23 @@ async function carregarUsuario() {
     };
   } else {
     // já está completo
-    div.innerHTML = `
-      <h1>Bem-vindo, ${data.nome}</h1>
-      <p>Email: ${data.email}</p>
-      <p>Endereço: ${data.rua}, ${data.bairro}, CEP ${data.cep}</p>
-      <img src="${data.foto || ""}" alt="foto" width="100">
-    `;
+    trocarConteudo(`
+      <div id="map"></div>
+      <div id="admin-card" class="admin-card hidden">
+  <div id="card-header">Adicionar Bairro</div>
+  <div id="card-body" class="hidden">
+  <form onsubmit="salvarBairro()">
+    <label>Nome:</label>
+    <input id="bairro-nome" type="text" />
+    <label>Latitude:</label>
+    <input id="bairro-lat" type="number" step="any" />
+    <label>Longitude:</label>
+    <input id="bairro-lon" type="number" step="any" />
+    <input type="submit">Salvar</input>
+    </form>
+  </div>
+</div>
+`);
   }
 }
 
