@@ -16,7 +16,7 @@ public class Bairro {
     @Column (nullable = false)
     private Double longitude;
 
-    @Column (nullable = false)
+    @Column (nullable = true)
     private Integer notaGeral;
 
     @Column (nullable = true)

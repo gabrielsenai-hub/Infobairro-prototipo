@@ -42,7 +42,7 @@ async function salvarBairro() {
     alert("Preencha todos os campos!");
   }
 
-  const res = await fetch("http://localhost:8080/auth/bairros", {
+  const res = await fetch("http://localhost:8080/auth/bairrosAdd", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ nome, latitude: lat, longitude: lon }),
@@ -52,24 +52,17 @@ async function salvarBairro() {
     showAlert("Bairro adicionado!", "success", 3000);
     // Opcional: adicionar marker no mapa
     L.marker([lat, lon]).addTo(map).bindPopup(nome);
+  } else if (res.status == 409) {
+    showAlert("Bairro ja cadastrado", "error", 3000);
   } else {
     showAlert("Erro ao salvar bairro", "error", 3000);
   }
 }
 function loginWithGoogle() {
-  const largura = 500;
-  const altura = 600;
-  const left = screen.width / 2 - largura / 2;
-  const top = screen.height / 2 - altura / 2;
-
   const oauthUrl = "http://localhost:8080/oauth2/authorization/google";
   // essa é a URL que inicia o fluxo OAuth2 no seu backend
 
-  const janela = window.open(
-    oauthUrl,
-    "Login com Google",
-    `width=${largura},height=${altura},top=${top},left=${left}`
-  );
+  const janela = window.open.apply(oauthUrl, "Login com Google");
 
   // opcional: monitorar se a janela foi fechada
   const timer = setInterval(() => {
@@ -89,90 +82,165 @@ async function init() {
   }
 }
 
-window.onload = init;
-
 async function carregarUsuario() {
-  const res = await fetch("http://localhost:8080/auth/user", {
-    credentials: "include",
-  });
-  const data = await res.json();
+  try {
+    const res = await fetch("http://localhost:8080/auth/user", {
+      // NÃO use no-cors
+      credentials: "include",
+      headers: { Accept: "application/json" },
+    });
 
-  const div = document.getElementById("container");
-  div.innerHTML = "";
+    if (!res.ok) {
+      console.error("Resposta do servidor:", res.status, res.statusText);
+      showAlert("Erro no servidor: " + res.status, "error", 3000);
+      return;
+    }
 
-  if (!data.rua || !data.cep || !data.bairro) {
-    document.getElementsByClassName("login")[0].style.display = "none";
-    showAlert("Complete seu cadastro", "info", 3000);
-    div.innerHTML = `
-      <form id="complemento">
+    const data = await res.json();
+
+    const div = document.getElementById("container");
+    div.innerHTML = "";
+
+    if (data.admin == true)
+      document.getElementById("admin").style.display = "block";
+
+    if (
+      !data.rua ||
+      !data.cep ||
+      !data.bairro ||
+      !data.dataNascimento ||
+      !data.cidade
+    ) {
+      document.getElementsByClassName("login")[0].style.display = "none";
+      showAlert("Complete seu cadastro", "info", 3000);
+      div.innerHTML = `
+      <form id="complemento" style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      box-shadow: 0px 0px 10px rgba(121, 120, 120, 0.808);
+      border-radius: 10px;
+      padding: 15px;">
       <h2 class="BemVindo">Complete seu cadastro</h2>
       <div id="complementoCell">
       <br>
       <label for="cep">Insira o seu CEP:</label><br>
-      <input type="text" id="cep" maxlength="9" placeholder="00000-000" required>
+      <input name="cep" type="number" id="cep" maxlength="8" placeholder="00000000" oninput="buscaCepComplemento(this)" required>
       <br>
       <label for="bairro">Insira o seu bairro:</label><br>
-      <input type="text" id="bairro" placeholder="Insira aqui o seu bairro" required>
+      <input name="bairro" type="text" id="bairro" placeholder="Insira aqui o seu bairro" required>
       <br>
       <label for="rua">Insira a sua rua:</label><br>
-      <input type="text" id="rua" name="street-address" placeholder="Insira aqui a sua rua" autocomplete="street-address" required>
+      <input name="rua" type="text" id="rua" placeholder="Insira aqui a sua rua" autocomplete="street-address" required>
       <br>
+      <label for="cidade">Insira a sua cidade:</label><br>
+      <input name="cidade" type="text" id="cidade" placeholder="Insira aqui a sua cidade" required>
+      <br>
+      <label for="nascimento">Insira a sua data de nascimento:</label><br>
+      <input type="date" id="nascimento" required>
+      <br>
+      
       </div>
       <br>
-      <table>
-    <tr>
-    <td>
+      <table id="complementoDKT">
+      <tr>
+      <td>
     <label for="cep">Insira o seu CEP:</label><br>
-      <input type="text" id="cep" maxlength="9" placeholder="00000-000" required>
+    <input name="cep" type="number" id="cep" maxlength="8" placeholder="00000000 (sem hifen)" oninput="buscarCep(this)" required>
     </td>
     <td>
     <label for="bairro">Insira o seu bairro:</label><br>
-    <input type="text" id="bairro" placeholder="Insira aqui o seu bairro" required>
+    <input name="bairro" type="text" id="bairro" placeholder="Insira aqui o seu bairro" required>
     </td>
     </tr>
     <tr>
-    <td colspan="2">
+    <td>
     <label for="rua">Insira a sua rua:</label><br>
-    <input type="text" id="rua" name="street-address" placeholder="Insira aqui a sua rua" autocomplete="street-address" required>
+    <input name="rua" type="text" id="rua" placeholder="Insira aqui a sua rua" autocomplete="street-address" required>
+    </td>
+    <td>
+    <label for="cidade">Insira a sua cidade:</label><br>
+    <input name="cidade" type="text" id="cidade" placeholder="Insira aqui a sua cidade" required>
+    </td>
+    <td>
+    <label for="nascimento">Insira a sua data de nascimento:</label><br>
+    <input type="date" id="nascimento" required>
     </td>
     </tr>
     </table>
     <input type="submit" id="salvar" value="Finalizar">
       </form>
-    `;
-    document.getElementById("salvar").onclick = async () => {
-      const rua = document.getElementById("rua").value;
-      const cep = document.getElementById("cep").value;
-      const bairro = document.getElementById("bairro").value;
+      `;
+      document.getElementById("salvar").onclick = async () => {
+        const rua = document.getElementById("rua").value;
+        const cep = document.getElementById("cep").value;
+        const bairro = document.getElementById("bairro").value;
+        const cidade = document.getElementById("cidade").value;
+        const dataNascimento = document.getElementById("nascimento").value;
 
-      await fetch("http://localhost:8080/auth/user/complemento", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ rua, cep, bairro }),
-      });
+        await fetch("http://localhost:8080/auth/user/complemento", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ rua, cep, bairro, cidade, dataNascimento }),
+        });
 
-      carregarUsuario(); // recarrega dados
-    };
-  } else {
-    // já está completo
-    trocarConteudo(`
+        carregarUsuario(); // recarrega dados
+      };
+    } else {
+      // já está completo
+      trocarConteudo(`
       <div id="map"></div>
+      <div id="admin">
+     <div class="adminCardOpt" onclick="adminCard()"><img src="./img/botaoLateral.png" style="width: 24px;"></div>
       <div id="admin-card" class="admin-card hidden">
-  <div id="card-header">Adicionar Bairro</div>
-  <div id="card-body" class="hidden">
-  <form onsubmit="salvarBairro()">
-    <label>Nome:</label>
-    <input id="bairro-nome" type="text" />
-    <label>Latitude:</label>
-    <input id="bairro-lat" type="number" step="any" />
-    <label>Longitude:</label>
-    <input id="bairro-lon" type="number" step="any" />
-    <input type="submit">Salvar</input>
-    </form>
-  </div>
-</div>
+      <div id="card-header"> <img src="./img/botaoLateralAdc.png" style="width: 20px; cursor: pointer;" onclick="adminCard()"> Adicionar Bairro</div>
+      <div id="card-body" class="hidden">
+        <form onsubmit="salvarBairro()">
+          <table class="adcBairro" id="formAdcBairro">
+            <tr>
+              <td>
+                <label>Nome:</label>
+              </td>
+              <td>
+                <input id="bairro-nome" type="text" />
+              </td>
+            </tr>
+
+            <tr >
+              <td>
+                <label for="bairro-lat">Latitude:</label>
+              </td>
+              <td>
+                <input id="bairro-lat" type="number" step="any" />
+              </td>
+            </tr>
+            <tr">
+              <td>
+
+                <label for="bairro-lon">Longitude:</label>
+              </td>
+              <td>
+
+                <input id="bairro-lon" type="number" step="any" />
+              </td>
+            </tr>
+          </table>
+          <input type="submit" value="Salvar" />
+        </form>
+      </div>
+      </div>
+    </div>
 `);
+    }
+  } catch (err) {
+    console.error("Erro ao conectar:", err);
+    showAlert(
+      "Não foi possível conectar ao servidor. Veja console.",
+      "error",
+      3000
+    );
   }
 }
 
@@ -278,6 +346,9 @@ function validarSenha(senha, confirmasenha) {
     result.innerText = "As senhas não conferem.";
   }
 }
+setTimeout(() => {
+  initMap();
+}, 500);
 function initMap() {
   if (map) {
     map.remove();
@@ -296,6 +367,7 @@ function initMap() {
     .then((res) => res.json())
     .then((data) => {
       data.forEach((bairro) => {
+        console.log(bairro);
         L.marker([bairro.latitude, bairro.longitude])
           .addTo(map)
           .bindPopup(bairro.nome);
@@ -305,7 +377,10 @@ function initMap() {
   map.locate({ setView: true });
 
   map.on("locationfound", function (e) {
-    L.marker(e.latlng).addTo(map).bindPopup("Você está aqui!").openPopup();
+    L.marker(e.latlng)
+      .addTo(map)
+      .bindPopup(`${e.latlng.lat}, ${e.latlng.lng}`)
+      .openPopup();
   });
 
   map.on("locationerror", function () {
@@ -327,81 +402,191 @@ function trocarConteudo(novoHTML) {
     setTimeout(() => {
       container.classList.remove("fade-in");
     }, 400);
-    if (novoHTML == `<div id="map"></div>`) {
+    if (novoHTML.includes(`<div id="map"></div>`)) {
       initMap();
     }
   }, 400);
 }
-async function cadastrar() {
-  const nome = document.getElementById("nomeC").value;
-  const email = document.getElementById("emailC").value;
-  const senha = document.getElementById("senhaC").value;
-  const confirmasenha = document.getElementById("senhaR").value;
-  const cep = document.getElementById("cepC").value;
-  const bairro = document.getElementById("bairroC").value;
-  const rua = document.getElementById("ruaC").value;
 
-  if (senha !== confirmasenha) {
+async function cadastrar() {
+  const nome = "";
+  const email = "";
+  const senha = "";
+  const cep = "";
+  const bairro = "";
+  const rua = "";
+  const dataNascimento = "";
+
+  window.innerWidth <= 730
+    ? ((nome = document.getElementById("nomeC").value),
+      (email = document.getElementById("emailC").value),
+      (senha = document.getElementById("senhaC").value),
+      (confirmasenha = document.getElementById("senhaR").value),
+      (cep = document.getElementById("cepC").value),
+      (bairro = document.getElementById("bairroC").value),
+      (rua = document.getElementById("ruaC").value),
+      (cidade = document.getElementById("cidadeC").value),
+      (dataNascimento = document.getElementById("dataNascimentoC").value))
+    : ((nome = document.getElementById("nomeCT").value),
+      (email = document.getElementById("emailCT").value),
+      (senha = document.getElementById("senhaCT").value),
+      (confirmasenha = document.getElementById("senhaRT").value),
+      (cep = document.getElementById("cepCT").value),
+      (bairro = document.getElementById("bairroCT").value),
+      (rua = document.getElementById("ruaCT").value),
+      (cidade = document.getElementById("cidadeCT").value),
+      (dataNascimento = document.getElementById("dataNascimentoCT").value));
+  
+  if (senha != confirmasenha) {
     showAlert("As senhas devem ser iguais", "error", 3000);
-    return;
   }
 
   const res = await fetch("http://localhost:8080/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ nome, email, senha, cep, bairro, rua }),
+    body: JSON.stringify({
+      nome,
+      email,
+      senha,
+      cep,
+      bairro,
+      rua,
+      cidade,
+      dataNascimento,
+    }),
   });
-
+  console.log(res);
   if (res.ok) {
+    for (let i = 0; i < document.getElementsByClassName("acesso").length; i++) {
+      document.getElementsByClassName("acesso")[i].style.display = "none";
+    }
     showAlert("Cadastro realizado com sucesso", "success", 3000);
     loginTela(); // vai para tela de login
+    trocarConteudo(`
+      <div id="map"></div>
+      <div id="admin">
+     <div class="adminCardOpt" onclick="adminCard()"><img src="./img/botaoLateral.png" style="width: 24px;"></div>
+      <div id="admin-card" class="admin-card hidden">
+      <div id="card-header"> <img src="./img/botaoLateralAdc.png" style="width: 20px; cursor: pointer;" onclick="adminCard()"> Adicionar Bairro</div>
+      <div id="card-body" class="hidden">
+        <form onsubmit="salvarBairro()">
+          <table class="adcBairro" id="formAdcBairro">
+            <tr>
+              <td>
+                <label>Nome:</label>
+              </td>
+              <td>
+                <input id="bairro-nome" type="text" />
+              </td>
+            </tr>
+
+            <tr >
+              <td>
+                <label for="bairro-lat">Latitude:</label>
+              </td>
+              <td>
+                <input id="bairro-lat" type="number" step="any" />
+              </td>
+            </tr>
+            <tr">
+              <td>
+
+                <label for="bairro-lon">Longitude:</label>
+              </td>
+              <td>
+
+                <input id="bairro-lon" type="number" step="any" />
+              </td>
+            </tr>
+          </table>
+          <input type="submit" value="Salvar" />
+        </form>
+      </div>
+      </div>
+    </div>
+`);
   } else {
     const msg = await res.text();
     showAlert(msg, "error", 3000);
   }
 }
-async function login() {
-  event.preventDefault();
 
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
+// função login genérica — funciona pra qualquer form com inputs name="..." dentro de #Flogin
+async function login() {
+  const form = document.getElementsByClassName("Flogin")[0];
+  if (!form) return console.error("Form não encontrado: .Flogin");
+
+  // previne envios múltiplos
+  if (form.dataset.sending === "true") return;
+  form.dataset.sending = "true";
+
+  const submitBtn = form.querySelector('[type="submit"]');
+  if (submitBtn) submitBtn.disabled = true;
 
   try {
+    // pega valores diretamente (sem FormData)
+    const emailInput = form.querySelector('input[id="email"]');
+    const senhaInput = form.querySelector('input[id="senha"]');
+
+    const email = emailInput ? emailInput.value.trim() : "";
+    const senha = senhaInput ? senhaInput.value : "";
+
+    // validação mínima
+    if (!email || !senha) {
+      showAlert("Preencha email e senha", "info", 2000);
+      return;
+    }
+
+    const payload = { email, senha };
+
     const res = await fetch("http://localhost:8080/auth/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       credentials: "include",
-      body: JSON.stringify({ email, senha }),
+      body: JSON.stringify(payload),
     });
 
-    if (res.ok) {
-      showAlert("Login bem-sucedido!", "success");
-      const data = await res.json();
-      console.log(data);
-      window.location.href = "index.html";
-    } else {
-      // customiza mensagem de acordo com o status
-      switch (res.status) {
-        case 400:
-          showAlert("Requisição inválida!", "error");
-          break;
-        case 401:
-          showAlert("Email ou senha incorretos!", "error");
-          break;
-        case 404:
-          showAlert("Usuário não encontrado!", "error");
-          break;
-        case 500:
-          showAlert("Erro no servidor, tente mais tarde.", "error");
-          break;
-        default:
-          showAlert(`Erro ${res.status}: ${res.statusText}`, "error");
+    if (!res.ok) {
+      // tenta extrair mensagem JSON, se não der pega texto bruto
+      let errMsg = `Erro ${res.status}`;
+      try {
+        const errJson = await res.json();
+        if (errJson) {
+          if (errJson.message) errMsg = errJson.message;
+          else if (errJson.error) errMsg = errJson.error;
+          else errMsg = JSON.stringify(errJson);
+        }
+      } catch (e) {
+        const txt = await res.text();
+        if (txt) errMsg = txt;
       }
+      showAlert(errMsg, "error", 3000);
+      console.error("login failed", res.status, res.statusText);
+      return;
+    }
+
+    const data = await res.json(); // dados do servidor
+    showAlert("Login realizado!", "success", 1500);
+    for (let i = 0; i < document.getElementsByClassName("acesso").length; i++) {
+      document.getElementsByClassName("acesso")[i].style.display = "none";
+    }
+
+    // atualiza a UI / puxa dados do usuário
+    if (typeof carregarUsuario === "function") {
+      carregarUsuario();
+    } else {
+      window.location.reload();
     }
   } catch (err) {
-    showAlert("Não foi possível conectar ao servidor.", "error", 3000);
-    console.error(err);
+    console.error("Erro na requisição de login:", err);
+    showAlert("Erro ao conectar com o servidor. Veja console.", "error", 3000);
+  } finally {
+    form.dataset.sending = "false";
+    if (submitBtn) submitBtn.disabled = false;
   }
 }
 
@@ -490,7 +675,7 @@ function cadastrarTela() {
     </div>
     <div class="telaL">
     <h3 class="BemVindo">Bem-vindo!</h3>
-    <form class="Flogin" method="post" onsubmit="return validarCadastro()">
+    <form class="FCadastro">
 
   <div id="CadCell">
     <br>
@@ -502,7 +687,27 @@ function cadastrarTela() {
     <input type="email" id="emailC" placeholder="Insira aqui o seu email" required>
     <br>
     <br>
-    <label for="senhaC">Defina uma senha:</label> <br>
+    <label for="cepC">Insira o seu CEP:</label> <br>
+    <input name="cep" type="number" id="cepC" placeholder="00000-000" maxlength="8" oninput="buscaCep(this)"  required>
+    <br>
+    <br>
+    <label for="bairroC">Insira o seu bairro:</label> <br>
+    <input name="bairro" type="text" id="bairroC" placeholder="Insira aqui o seu bairro" required>
+    <br>
+    <br>
+    <label for="ruaC">Insira a sua rua:</label> <br>
+    <input name="rua" type="text" id="ruaC" placeholder="Insira aqui a sua rua" placeholder="Insira aqui a sua rua" required>
+    <br>
+    <br>
+    <label for="cidadeC">Insira a sua cidade:</label> <br>
+    <input name="cidade" type="text" id="cidadeC" placeholder="Insira aqui a sua cidade" required>
+    <br>
+    <br>
+    <label for="dataNascimentoC">Data de Nascimento:</label><br>
+    <input type="date" id="dataNascimentoC" required>
+    <br>
+    <br>
+      <label for="senhaC">Defina uma senha:</label> <br>
     <input type="password" id="senhaC" oninput="validarForca(this)" placeholder="Insira aqui a senha" required>
     <br>
     <div id="forca-container">
@@ -515,23 +720,17 @@ function cadastrarTela() {
     <input type="password" oninput="validarSenha(document.getElementById('senhaC').value, this.value)" id="senhaR" placeholder="Insira aqui a senha" required>
     <br>
     <p id="validarCell"></p>
+    
     <br>
-    <br>
-    <label for="cepC">Insira o seu CEP:</label> <br>
-    <input type="number" id="cepC" placeholder="00000-000" maxlength="9" required>
-    <br>
-    <br>
-    <label for="bairroC">Insira o seu bairro:</label> <br>
-    <input type="text" id="bairroC" placeholder="Insira aqui o seu bairro" required>
-    <br>
-    <br>
-    <label for="ruaC">Insira a sua rua:</label> <br>
-    <input type="text" id="ruaC" name="street-address" placeholder="Insira aqui a sua rua" placeholder="Insira aqui a sua rua" required>
-    <br>
+    
+    <div = class="botaoS">
+    <input type="submit" value="Cadastrar" onclick="cadastrar()">
+    <button id="loginGoogle" onclick="loginWithGoogle()"><img src="./img/google.png" alt="Google" width="30px" height="30px">Cadastrar com Google</button>
     </div>
-
-
-    <table>
+    </div>
+    </form>
+    <form class="FCadastro">
+    <table id="CadDKT">
     <tr>
     <td>
     <label for="nomeCT">Nome:</label><br>
@@ -545,17 +744,27 @@ function cadastrarTela() {
     <tr>
     <td>
     <label for="cepCT">Insira o seu CEP:</label><br>
-      <input type="text" id="cepCT" maxlength="9" placeholder="00000-000" required>
+      <input name="cep" type="number" id="cepCT" maxlength="8" placeholder="00000000 (sem hifen)" oninput="buscaCep(this)"required>
     </td>
     <td>
     <label for="bairroCT">Insira o seu bairro:</label><br>
-    <input type="text" id="bairroCT" placeholder="Insira aqui o seu bairro" required>
+    <input name="bairro" type="text" id="bairroCT" placeholder="Insira aqui o seu bairro" required>
     </td>
     </tr>
     <tr>
-    <td colspan="2">
+    <td>
     <label for="ruaCT">Insira a sua rua:</label><br>
-    <input type="text" id="ruaCT" name="street-address" placeholder="Insira aqui a sua rua" autocomplete="street-address" required>
+    <input name="rua" type="text" id="ruaCT" placeholder="Insira aqui a sua rua" name="ruaCT" autocomplete="street-address" required>
+    </td>
+    <td>
+    <label for="cidadeCT">Insira a sua cidade:</label><br>
+    <input name="cidade" type="text" id="cidadeCT" placeholder="Insira aqui a sua cidade" required>
+    </td>
+    </tr>
+    <tr>
+    <td>
+    <label for="dataNascimentoCT">Data de Nascimento:</label><br>
+    <input type="date" id="dataNascimentoCT" required min="1920-01-01" max="2022-01-01">
     </td>
     </tr>
         <tr>
@@ -584,15 +793,15 @@ function cadastrarTela() {
     </tr>
 
     </table>
-
+    <div = class="botaoS">
+    <input type="submit" value="Cadastrar" onclick="cadastrar()">
+    <button id="loginGoogle" onclick="loginWithGoogle()"><img src="./img/google.png" alt="Google" width="30px" height="30px">Cadastrar com Google</button>
+    </div>
+    
+    </form>
     
     
     <br>
-    <div = id="botaoS">
-    <input type="submit" value="Cadastrar">
-    <button id="loginGoogle" onclick="loginWithGoogle()"><img src="./img/google.png" alt="Google" width="30px" height="30px">Cadastrar com Google</button>
-    </div>
-    </form>
     
     </div>    
     
@@ -643,7 +852,7 @@ function loginTela() {
     
     <div class="telaL">
     <h3 class="BemVindo" style="font-size: 30px;">Bem-vindo</h3>
-    <form class="Flogin" method="post" onsubmit="login()">
+    <form class="Flogin">
 <table>
 <tr>
 <tr>
@@ -658,7 +867,7 @@ function loginTela() {
 </tr>
 <tr>
 <br>
-<input type="submit" value="Entrar">
+<input type="submit" value="Entrar" onclick="login()">
 
 </tr>
 </tr>
@@ -733,5 +942,89 @@ function showAlert(message, type, duration) {
     alertBox.classList.remove("show");
   }, duration);
 }
+
+function buscaCep(cepC) {
+  var form = "";
+  if(window.innerWidth <= 730) {
+    
+    form = document.getElementById("CadCell");
+  }
+  else {
+    form = document.getElementById("CadDKT");
+  }
+
+  if (!form) {
+  alert("Formulário #FCadastro não encontrado!");
+}
+
+  const cep = cepC.value.replace(/\D/g, ""); // só números
+  if (cep.length === 8) {
+    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.erro) {
+          const mapCampos = {
+            rua: "logradouro",
+            bairro: "bairro",
+            cidade: "localidade",
+          };
+
+          Object.keys(mapCampos).forEach((campoForm) => {
+            const input = form.querySelector(`input[name="${campoForm}"]`);
+            if (input) {
+              input.value = data[mapCampos[campoForm]] || "";
+              console.warn(`Campo "${data[mapCampos[campoForm]]}" substituido com sucesso.`);
+            } else {
+            }
+          });
+        } else {
+          console.warn(`CEP não encontrado: ${cep}`);
+        }
+      })
+      .catch((err) => console.warn("Erro ao buscar CEP:", err));
+  }
+}
+function buscaCepComplemento(cepC) {
+  var form = "";
+  if(window.innerWidth <= 730) {
+    
+    form = document.getElementById("complementoCell");
+  }
+  else {
+    form = document.getElementById("complementoDKT");
+  }
+
+  if (!form) {
+  alert("Formulário #FCadastro não encontrado!");
+}
+
+  const cep = cepC.value.replace(/\D/g, ""); // só números
+  if (cep.length === 8) {
+    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.erro) {
+          const mapCampos = {
+            rua: "logradouro",
+            bairro: "bairro",
+            cidade: "localidade",
+          };
+
+          Object.keys(mapCampos).forEach((campoForm) => {
+            const input = form.querySelector(`input[name="${campoForm}"]`);
+            if (input) {
+              input.value = data[mapCampos[campoForm]] || "";
+              console.warn(`Campo "${data[mapCampos[campoForm]]}" substituido com sucesso.`);
+            } else {
+            }
+          });
+        } else {
+          console.warn(`CEP não encontrado: ${cep}`);
+        }
+      })
+      .catch((err) => console.warn("Erro ao buscar CEP:", err));
+  }
+}
+
 var map;
 initMap();

@@ -2,7 +2,6 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>InfoBairro</title>
     <link rel="stylesheet" href="./css/style.css" />
@@ -13,6 +12,7 @@
     <link rel="icon" href="./img/Logo.png" />
   </head>
   <body>
+    
     <header>
       <div id="caixa">
         <div id="logo">
@@ -42,46 +42,6 @@
         </nav>
       </div>
     </header>
-    <div id="admin">
-    <div class="adminCardOpt" onclick="adminCard()"><img src="./img/botaoLateral.png" style="width: 24px;"></div>
-    <div id="admin-card" class="admin-card hidden">
-      <div id="card-header"> <img src="./img/botaoLateralAdc.png" style="width: 20px;" onclick="adminCard()"> Adicionar Bairro</div>
-      <div id="card-body" class="hidden">
-        <form onsubmit="salvarBairro()">
-          <table class="adcBairro" id="formAdcBairro">
-            <tr>
-              <td>
-                <label>Nome:</label>
-              </td>
-              <td>
-                <input id="bairro-nome" type="text" />
-              </td>
-            </tr>
-
-            <tr >
-              <td>
-                <label for="bairro-lat">Latitude:</label>
-              </td>
-              <td>
-                <input id="bairro-lat" type="number" step="any" />
-              </td>
-            </tr>
-            <tr">
-              <td>
-
-                <label for="bairro-lon">Longitude:</label>
-              </td>
-              <td>
-
-                <input id="bairro-lon" type="number" step="any" />
-              </td>
-            </tr>
-          </table>
-          <input type="submit" value="Salvar" />
-        </form>
-      </div>
-      </div>
-    </div>
     <section id="container">
       <div id="map"></div>
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

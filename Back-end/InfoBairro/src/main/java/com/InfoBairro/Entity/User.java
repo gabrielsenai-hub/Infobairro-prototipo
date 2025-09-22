@@ -1,37 +1,38 @@
 package com.InfoBairro.Entity;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table (name = "Usuario")
+@Table(name = "Usuario")
 public class User {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idUsuario;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private String nome;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private String email;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private String senha;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private LocalDate data_nascimento;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private LocalDateTime registro_cadastro;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private Boolean admin = false;
 
     @PrePersist
-    protected void onCreate(){
+    protected void onCreate() {
         this.registro_cadastro = LocalDateTime.now();
     }
 

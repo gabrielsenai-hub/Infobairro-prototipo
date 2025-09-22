@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class InfoBairroApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(InfoBairroApplication.class, args);
 	}
 
