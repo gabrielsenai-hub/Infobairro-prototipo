@@ -5,23 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>InfoBairro</title>
     <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/mediaQueries.css" />
+    <link rel="stylesheet" href="./css/forms.css" />
+    <link rel="stylesheet" href="./css/animations.css" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
+    <script src="./js/script.js"></script>
+    <script src="./js/registro.js"></script>
+    <script src="./js/bairros.js"></script>
+    <script src="./js/validacoes.js"></script>
+
     <link rel="icon" href="./img/Logo.png" />
   </head>
   <body>
-    
     <header>
-      <div id="caixa">
         <div id="logo">
           <img src="./img/Logo.png" alt="Logo site" />
           <p>
             <span class="corLogo">I</span>nfo<span class="corLogo">B</span>airro
           </p>
         </div>
-        <nav class="login">
+        <nav class="loginBtn">
           <ul>
             <li>
               <button id="cadastrar" class="acesso" onclick="cadastrarTela()">
@@ -40,7 +46,6 @@
             </li>
           </ul>
         </nav>
-      </div>
     </header>
     <section id="container">
       <div id="map"></div>
@@ -50,7 +55,5 @@
     <div id="customAlert" class="custom-alert">
       <span id="alertMessage"></span>
     </div>
-
-    <script src="./js/script.js"></script>
   </body>
 </html>
