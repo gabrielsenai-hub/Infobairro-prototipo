@@ -4,28 +4,26 @@
     display: none;
   }
 
-  #container {
-    height: 90vh;
+  #container > #map {
+    height: 89.5vh;
   }
-
-  header {
-    height: 8vh;
-  }
-
-  #map,
   .Ilogin,
   .ICadastro {
     height: 100%;
   }
 
-  .carrossel1 {
-    height: 100vh;
+  .ICadastro > .telaL {
+    margin-top: 6vh;
   }
 
   .telaL {
     width: max-content;
     height: max-content;
     padding: 20px 40px;
+    /* margin: 15vh 0px 15vh 0px; */
+  }
+  .carrossel1 {
+    height: 87vh;
   }
 }
 
@@ -35,28 +33,25 @@
     display: none;
   }
 
-  #container {
-    height: 93vh;
-  }
-
   header {
     height: 6vh;
   }
 
-  #map,
   .Ilogin,
   .ICadastro {
-    height: 100%;
-  }
-
-  .carrossel1 {
-    height: 120vh;
+    height: 89vh;
   }
 
   .telaL {
     width: max-content;
     padding: 10px 40px;
     height: max-content;
+  }
+  .carrossel1 {
+    height: 100%;
+  }
+  #container {
+    height: 95vh;
   }
 }
 
@@ -100,10 +95,8 @@
     justify-content: center;
     align-items: center;
     font-size: 10px;
-    z-index: 2;
     padding-bottom: 4px;
     height: max-content;
-
   }
 
   .loginBtn .acesso {
@@ -152,17 +145,11 @@
     transition: 0.5s;
   }
 
-  #container {
-    height: max-content;
-    transition: 0.5s;
-  }
-
   .Ilogin {
     height: max-content;
     transition: 0.5s;
     z-index: 2;
   }
-
   .ICadastro .telaL {
     height: max-content;
   }
@@ -173,7 +160,7 @@
   }
 
   #map {
-    height: 88dvh;
+    height: auto;
     transition: 0.5s;
   }
 
@@ -190,8 +177,7 @@
   .carrossel1 {
     position: absolute;
     transition: 0.5s;
-    height: 88vh;
-    margin: 0;
+    height: 91%;
   }
 
   #carrossel1-1 {

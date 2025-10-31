@@ -98,7 +98,6 @@ form input[type="submit"]:hover {
 .carrossel1 {
   margin: 0px 40px;
   width: 60px;
-  height: 89vh;
   background-color: #89ae6a;
   display: flex;
   align-items: center;
@@ -117,11 +116,11 @@ form input[type="submit"]:hover {
   justify-content: center;
   z-index: 1;
 }
-.conteudo{
+.conteudo {
   width: 4500px;
   height: 35px;
   background-image: url(../img/Casa1.png);
-  background-repeat:repeat-x;
+  background-repeat: repeat-x;
   background-size: 35px;
   animation: deslizaX 10s linear infinite;
 }
@@ -172,7 +171,7 @@ form input[type="submit"]:hover {
   border-color: #4caf50;
   box-shadow: 0 0 6px rgba(76, 175, 80, 0.4);
 }
-tr{
+tr {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -216,6 +215,7 @@ input {
   border: 1px solid #ccc;
   background-color: #ffffff;
   transition: 0.5s;
+  margin-bottom: 10px;
 }
 
 #complemento {
