@@ -58,3 +58,47 @@ async function salvarBairro() {
     showAlert("Erro ao salvar bairro", "error", 3000);
   }
 }
+function initMap() {
+  if (map) {
+    map.remove();
+  }
+
+  map = L.map("map", {
+    minZoom: 14.5,
+    maxZoom: 18,
+  }).setView([0, 0], 13);
+
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png", {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  }).addTo(map);
+  fetch("http://localhost:8080/auth/bairros")
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((bairro) => {
+        console.log(bairro);
+        L.marker([bairro.latitude, bairro.longitude])
+          .addTo(map)
+          .bindPopup(bairro.nome);
+      });
+    });
+
+  map.locate({ setView: true });
+
+  map.on("locationfound", function (e) {
+    L.marker(e.latlng)
+      .addTo(map)
+      .bindPopup(`${e.latlng.lat}, ${e.latlng.lng}`)
+      .openPopup();
+  });
+
+  map.on("locationerror", function () {
+    alert("Não foi possível acessar sua localização.");
+  });
+}
+setTimeout(() => {
+  initMap();
+}, 500);
+var map;
+
+initMap();

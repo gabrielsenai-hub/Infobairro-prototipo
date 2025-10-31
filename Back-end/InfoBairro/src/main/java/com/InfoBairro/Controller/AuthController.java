@@ -254,8 +254,6 @@ public class AuthController {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         private LocalDate data_nascimento;
 
-        // getters/setters (omitted here for brevity in the snippet) — include them in production
-        // ... generate getters and setters ...
         public String getNome() { return nome; }
         public void setNome(String nome) { this.nome = nome; }
         public String getEmail() { return email; }

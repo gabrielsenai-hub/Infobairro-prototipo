@@ -1,104 +1,100 @@
-async function cadastrar() {
-  const nome = "";
-  const email = "";
-  const senha = "";
-  const cep = "";
-  const bairro = "";
-  const rua = "";
-  const dataNascimento = "";
+const erro = localStorage.getItem("Erro")
+const spam1 = localStorage.getItem("Spam1")
+const spam2 = localStorage.getItem("Spam2")
 
-  window.innerWidth <= 730
-    ? ((nome = document.getElementById("nomeC").value),
-      (email = document.getElementById("emailC").value),
-      (senha = document.getElementById("senhaC").value),
-      (confirmasenha = document.getElementById("senhaR").value),
-      (cep = document.getElementById("cepC").value),
-      (bairro = document.getElementById("bairroC").value),
-      (rua = document.getElementById("ruaC").value),
-      (cidade = document.getElementById("cidadeC").value),
-      (dataNascimento = document.getElementById("dataNascimentoC").value))
-    : ((nome = document.getElementById("nomeCT").value),
-      (email = document.getElementById("emailCT").value),
-      (senha = document.getElementById("senhaCT").value),
-      (confirmasenha = document.getElementById("senhaRT").value),
-      (cep = document.getElementById("cepCT").value),
-      (bairro = document.getElementById("bairroCT").value),
-      (rua = document.getElementById("ruaCT").value),
-      (cidade = document.getElementById("cidadeCT").value),
-      (dataNascimento = document.getElementById("dataNascimentoCT").value));
+console.log(`${erro}\n\n${spam1}\n\n${spam2}`)
 
-  if (senha != confirmasenha) {
-    showAlert("As senhas devem ser iguais", "error", 3000);
+async function cadastrar(event) {
+  // Se chamado por onsubmit de um form, previne o reload
+  if (event && event.preventDefault) event.preventDefault();
+
+  // declarar com let para poder reatribuir
+  let nome = "";
+  let email = "";
+  let senha = "";
+  let confirmasenha = "";
+  let cep = "";
+  let bairro = "";
+  let rua = "";
+  let cidade = "";
+  let dataNascimento = "";
+
+  // usar if/else fica mais legível
+  if (window.innerWidth <= 730) {
+    nome = document.getElementById("nomeC")?.value.trim() ?? "";
+    email = document.getElementById("emailC")?.value.trim() ?? "";
+    senha = document.getElementById("senhaC")?.value ?? "";
+    confirmasenha = document.getElementById("senhaR")?.value ?? "";
+    cep = document.getElementById("cepC")?.value.trim() ?? "";
+    bairro = document.getElementById("bairroC")?.value.trim() ?? "";
+    rua = document.getElementById("ruaC")?.value.trim() ?? "";
+    cidade = document.getElementById("cidadeC")?.value.trim() ?? "";
+    dataNascimento = document.getElementById("dataNascimentoC")?.value ?? "";
+  } else {
+    nome = document.getElementById("nomeCT")?.value.trim() ?? "";
+    email = document.getElementById("emailCT")?.value.trim() ?? "";
+    senha = document.getElementById("senhaCT")?.value ?? "";
+    confirmasenha = document.getElementById("senhaRT")?.value ?? "";
+    cep = document.getElementById("cepCT")?.value.trim() ?? "";
+    bairro = document.getElementById("bairroCT")?.value.trim() ?? "";
+    rua = document.getElementById("ruaCT")?.value.trim() ?? "";
+    cidade = document.getElementById("cidadeCT")?.value.trim() ?? "";
+    dataNascimento = document.getElementById("dataNascimentoCT")?.value ?? "";
   }
 
-  const res = await fetch("http://localhost:8080/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({
-      nome,
-      email,
-      senha,
-      cep,
-      bairro,
-      rua,
-      cidade,
-      dataNascimento,
-    }),
-  });
-  console.log(res);
-  if (res.ok) {
-    for (let i = 0; i < document.getElementsByClassName("acesso").length; i++) {
-      document.getElementsByClassName("acesso")[i].style.display = "none";
+  // validação de senha: interrompe se não bate
+  if (senha !== confirmasenha) {
+    showAlert("As senhas devem ser iguais", "error", 3000);
+    return;
+  }
+
+  // montar payload
+  const payload = { nome, email, senha, cep, bairro, rua, cidade, dataNascimento };
+
+  try {
+    const res = await fetch("http://localhost:8080/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+
+    // consumir o corpo uma vez e armazenar de forma segura (texto/obj JSON)
+    const text = await res.text();
+    let body;
+    try {
+      body = JSON.parse(text);
+    } catch {
+      body = text;
     }
-    showAlert("Cadastro realizado com sucesso", "success", 3000);
-    loginTela(); // vai para tela de login
-    trocarConteudo(`
-      <div id="map"></div>
-      <div id="admin">
-     <div class="adminCardOpt" onclick="adminCard()"><img src="./img/botaoLateral.png" style="width: 24px;"></div>
-      <div id="admin-card" class="admin-card hidden">
-      <div id="card-header"> <img src="./img/botaoLateralAdc.png" style="width: 20px; cursor: pointer;" onclick="adminCard()"> Adicionar Bairro</div>
-      <div id="card-body" class="hidden">
-        <form onsubmit="salvarBairro()">
-          <table class="adcBairro" id="formAdcBairro">
-            <tr>
-              <td>
-                <label>Nome:</label>
-              </td>
-              <td>
-                <input id="bairro-nome" type="text" />
-              </td>
-            </tr>
 
-            <tr >
-              <td>
-                <label for="bairro-lat">Latitude:</label>
-              </td>
-              <td>
-                <input id="bairro-lat" type="number" step="any" />
-              </td>
-            </tr>
-            <tr">
-              <td>
+    // Exemplo de armazenamento: salvar status + body (string)
+    localStorage.setItem("Spam2", JSON.stringify({ status: res.status, body }));
 
-                <label for="bairro-lon">Longitude:</label>
-              </td>
-              <td>
+    if (res.ok) {
+      // esconder elementos .acesso
+      const acessos = document.getElementsByClassName("acesso");
+      for (let i = 0; i < acessos.length; i++) {
+        acessos[i].style.display = "none";
+      }
+      showAlert("Cadastro realizado com sucesso", "success", 3000);
 
-                <input id="bairro-lon" type="number" step="any" />
-              </td>
-            </tr>
-          </table>
-          <input type="submit" value="Salvar" />
-        </form>
-      </div>
-      </div>
-    </div>
-`);
-  } else {
-    const msg = await res.text();
-    showAlert(msg, "error", 3000);
+      // Opcional: armazenar resposta útil (token, user id). NÃO armazene senha.
+      localStorage.setItem("Spam1", JSON.stringify(body));
+
+      // atualizar UI
+      loginTela();
+      trocarConteudo(`... seu template ...`);
+    } else {
+      // se o servidor retornou erro, mostrar mensagem
+      const mensagem = (body && body.message) ? body.message : String(body);
+      showAlert(mensagem, "error", 3000);
+      localStorage.setItem("Erro", mensagem);
+    }
+  } catch (err) {
+    // catch para falhas de rede
+    console.error("Erro no fetch:", err);
+    showAlert("Erro de rede: " + err.message, "error", 3000);
   }
 }
 
@@ -193,7 +189,7 @@ function cadastrarTela() {
     </div>
     <div class="telaL">
     <h3 class="BemVindo">Bem-vindo!</h3>
-    <form class="FCadastro">
+    <form class="FCadastro" onsubmit="cadastrar(event)">
 
   <div id="CadCell">
     <br>
@@ -247,7 +243,10 @@ function cadastrarTela() {
     </div>
     </div>
     </form>
-    <form class="FCadastro">
+
+
+    
+    <form class="FCadastro" onsubmit="cadastrar(event)">
     <table id="CadDKT">
     <tr>
     <td>
@@ -312,7 +311,7 @@ function cadastrarTela() {
 
     </table>
     <div = class="botaoS">
-    <input type="submit" value="Cadastrar" onclick="cadastrar()">
+    <button type="submit">Cadastrar</button>
     <button id="loginGoogle" onclick="loginWithGoogle()"><img src="./img/google.png" alt="Google" width="30px" height="30px">Cadastrar com Google</button>
     </div>
     
