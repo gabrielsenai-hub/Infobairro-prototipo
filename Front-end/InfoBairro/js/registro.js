@@ -26,7 +26,7 @@ async function cadastrar() {
       (rua = document.getElementById("ruaCT").value),
       (cidade = document.getElementById("cidadeCT").value),
       (dataNascimento = document.getElementById("dataNascimentoCT").value));
-  
+
   if (senha != confirmasenha) {
     showAlert("As senhas devem ser iguais", "error", 3000);
   }
@@ -188,78 +188,7 @@ function cadastrarTela() {
   <div class="ICadastro">
   <div id="carrossel2">
     <div class="conteudo">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
-    <img src="./img/Casa2.png">
+  
     </div>
     </div>
     <div class="telaL">
@@ -401,11 +330,10 @@ function loginTela() {
   document.getElementById("entrar").style.display = "none";
   document.getElementById("cadastrar").style.display = "block";
   document.getElementById("voltar").style.display = "block";
-
   trocarConteudo(`
-
+    
     <div class="Ilogin">
-        <div class="carrossel1">
+    <div class="carrossel1">
           <div class="repeticaoCasa1" onload="carrosselLogin()">    
     </div>
     </div>
@@ -442,16 +370,17 @@ function loginTela() {
     
 
     `);
+
 }
 
 function carrosselLogin() {
   for (let j = 0; j < 2; j++) {
-      for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 30; i++) {
 
       var casa = document.createElement("img");
       casa.src = "../img/Casa1.png";
       document.getElementsByClassName("repeticaoCasa1")[j].appendChild(casa);
-      
+
     }
 
   }

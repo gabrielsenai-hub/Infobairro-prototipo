@@ -117,6 +117,14 @@ form input[type="submit"]:hover {
   justify-content: center;
   z-index: 1;
 }
+.conteudo{
+  width: 4500px;
+  height: 35px;
+  background-image: url(../img/Casa1.png);
+  background-repeat:repeat-x;
+  background-size: 35px;
+  animation: deslizaX 10s linear infinite;
+}
 .carrossel1 .conteudo {
   display: flex;
   flex-direction: column;
@@ -127,7 +135,7 @@ form input[type="submit"]:hover {
 #carrossel2 .conteudo {
   display: flex;
   gap: 20px;
-  animation: deslizaX 60s linear infinite; /* rola devagar */
+  animation: deslizaX 45s linear infinite; /* rola devagar */
 }
 
 .carrossel1 img {
@@ -138,38 +146,6 @@ form input[type="submit"]:hover {
 #carrossel2 img {
   width: 35px;
   height: auto;
-}
-@keyframes deslizaX {
-  0% {
-    transform: translateX(100vh);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(-100px);
-    opacity: 0;
-  }
-}
-@keyframes subir {
-  0% {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-100px);
-    opacity: 0;
-  }
 }
 .telaL {
   display: flex;

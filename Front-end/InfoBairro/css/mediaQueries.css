@@ -1,49 +1,58 @@
-
 /* Laptops médios */
 @media (max-width: 1366px) {
   #CadCell {
-  display: none;
-}
+    display: none;
+  }
 
-  #container{
+  #container {
     height: 90vh;
   }
-  header{
+
+  header {
     height: 8vh;
   }
+
   #map,
   .Ilogin,
-  .ICadastro{
+  .ICadastro {
     height: 100%;
   }
+
   .carrossel1 {
     height: 100vh;
   }
+
   .telaL {
     width: max-content;
     height: max-content;
     padding: 20px 40px;
   }
 }
+
 /* Monitores grandes */
 @media (min-width: 1367px) {
   #CadCell {
     display: none;
   }
-  #container{
+
+  #container {
     height: 93vh;
   }
-  header{
+
+  header {
     height: 6vh;
   }
+
   #map,
   .Ilogin,
-  .ICadastro{
+  .ICadastro {
     height: 100%;
   }
+
   .carrossel1 {
     height: 120vh;
   }
+
   .telaL {
     width: max-content;
     padding: 10px 40px;
@@ -51,6 +60,7 @@
   }
 }
 
+/* Celulares */
 @media (max-width: 730px) {
   .telaL {
     height: max-content;
@@ -58,26 +68,32 @@
     margin: 20px;
     padding: 10px 20px;
   }
+
   .botaoS:first-of-type {
     display: none;
   }
+
   .botaoS:last-of-type {
     gap: 10px;
   }
+
   table {
     display: none;
     transition: 0.5s;
   }
+
   #carrossel2 {
     transition: 0.5s;
     height: 60px;
   }
-  #caixa img {
+
+  header img {
     margin: 0px;
     margin-top: 5px;
     transition: 0.5s;
   }
-  #caixa {
+
+  header {
     transition: 0.5s;
     display: flex;
     flex-direction: column;
@@ -86,18 +102,22 @@
     font-size: 10px;
     z-index: 2;
     padding-bottom: 4px;
+    height: max-content;
+
   }
+
   .loginBtn .acesso {
     transition: 0.5s;
     padding: 7px;
     font-size: small;
-    width: 100px;
+    width: max-content;
   }
+
   #voltar {
     transition: 0.5s;
-
     padding: 7px;
   }
+
   #CadCell {
     display: flex;
     flex-direction: column;
@@ -105,6 +125,7 @@
     align-items: center;
     transition: 0.5s;
   }
+
   #complementoCell {
     display: flex;
     flex-direction: column;
@@ -112,6 +133,7 @@
     align-items: center;
     transition: 0.5s;
   }
+
   .FormLogin {
     display: flex;
     flex-direction: column;
@@ -120,6 +142,7 @@
     z-index: 2;
     transition: 0.5s;
   }
+
   .FCadastro {
     display: flex;
     flex-direction: column;
@@ -128,25 +151,24 @@
     z-index: 2;
     transition: 0.5s;
   }
+
   #container {
-    height: 100vh;
-    transition: 0.5s;
-  }
-  header {
     height: max-content;
     transition: 0.5s;
   }
-  .Ilogin {
-    height: 80dvh;
-    transition: 0.5s;
 
+  .Ilogin {
+    height: max-content;
+    transition: 0.5s;
     z-index: 2;
   }
+
   .ICadastro .telaL {
-    height: 140vh;
+    height: max-content;
   }
+
   .ICadastro {
-    height: 150vh;
+    height: max-content;
     transition: 0.5s;
   }
 
@@ -154,24 +176,29 @@
     height: 88dvh;
     transition: 0.5s;
   }
+
   .loginBtn ul {
     margin-right: 0px;
     transition: 0.5s;
   }
+
   #logo {
     margin-left: 0;
     transition: 0.5s;
   }
+
   .carrossel1 {
     position: absolute;
     transition: 0.5s;
     height: 88vh;
     margin: 0;
   }
+
   #carrossel1-1 {
     display: none;
     transition: 0.5s;
   }
+
   .BemVindo {
     transition: 0.5s;
     font-size: 20px;
