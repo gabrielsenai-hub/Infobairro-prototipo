@@ -21,39 +21,98 @@
   </head>
   <body>
     <header>
-        <div id="logo">
+      <div id="logo">
+        <a href="" id="inicio">
           <img src="./img/Logo.png" alt="Logo site" />
           <p>
             <span class="corLogo">I</span>nfo<span class="corLogo">B</span>airro
           </p>
-        </div>
-        <nav class="loginBtn">
-          <ul>
-            <li>
-              <button id="cadastrar" class="acesso" onclick="cadastrarTela()">
-                Cadastre-se
-              </button>
-            </li>
-            <li>
-              <button id="entrar" class="acesso" onclick="loginTela()">
-                Login
-              </button>
-            </li>
-            <li>
-              <button class="acesso" id="voltar" onclick="voltarInicio()">
-                Voltar
-              </button>
-            </li>
-          </ul>
-        </nav>
+        </a>
+      </div>
+      <nav class="loginBtn">
+        <ul>
+          <li>
+            <button id="cadastrar" class="acesso" onclick="cadastrarTela()">
+              Cadastre-se
+            </button>
+          </li>
+          <li>
+            <button id="entrar" class="acesso" onclick="loginTela()">
+              Login
+            </button>
+          </li>
+          <li>
+            <button class="acesso" id="voltar" onclick="voltarInicio()">
+              Voltar
+            </button>
+          </li>
+        </ul>
+      </nav>
     </header>
     <section id="container">
       <div id="map"></div>
+      <div id="hudMinimizado">
+        <div class="info_Mini">
+          <h2 class="titulo_local">
+            Ponto certo <span class="subtitulo_bairro">(meu bairro)</span>
+          </h2>
+          <p class="nota_avaliacao">
+            <b class="nota_principal">3.5/5</b>
+            <span class="numero_avaliacoes">• (20 avaliações)</span>
+          </p>
+        </div>
+        <div id="itensMinimizados">
+          <div id="itensMEsquerda">
+
+            <table>
+              <tr>
+                <td><img src="./img/lazer.png" class="indicadorMini"></td>
+                <td><img src="./img/transporte.png" class="indicadorMini"></td>
+                <td><img src="./img/seg.png" class="indicadorMini"></td>
+              </tr>
+              <tr>
+                <td><img src="./img/educação.png" class="indicadorMini"></td>
+                <td><img src="./img/comércio.png" class="indicadorMini"></td>
+                <td><img src="./img/saúde.png" class="indicadorMini"></td>
+              </tr>
+            </table>
+
+          </div>
+          <div id="itensMDireita">
+
+            <h4>Ultimo Comentário: </h4>
+            <div id="hudUltimoComentario">
+              <span id="ultimoComentario">"Comentário"</span> <br>
+              <span id="ultimoComentarioDono">Anonimo</span> • <span id="ultimoComentarioTempo">há um dia</span>
+            </div>
+
+            <div class="botoesMDireita">
+              <button type="button" id="Botao_Ver_Detalhes">Ver Mais Detalhes</button>
+              <button type="button" id="botaoAvaliarBairro">Avaliar este bairro</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="configpop" onclick="configTela()">
+        <img src="./img//config_white.png" />
+      </div>
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     </section>
+
+    <!-- <div class="hudAvaliacoes">
+      <h1></h1>
+    </div> -->
 
     <div id="customAlert" class="custom-alert">
       <span id="alertMessage"></span>
     </div>
+
+    <footer>
+      <div id="info">
+        <p id="contato" onclick="contato()">Contato</p>
+        <p id="sobre" onclick="sobre()">Sobre</p>
+      </div>
+    </footer>
   </body>
 </html>

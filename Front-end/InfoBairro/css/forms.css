@@ -15,7 +15,26 @@ form input:focus {
 }
 
 /* Botão */
-form button[type="submit"], form input[type="submit"] {
+#abrir_estatisticas {
+  width: 80px;
+  padding: 5px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #4caf50, #3e8e41);
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  transition: transform 0.2s, background 0.3s;
+}
+#abrir_estatisticas:hover {
+  cursor: pointer;
+  transition: 0.5s;
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #3e8e41, #4caf50);
+}
+
+form button[type="submit"],
+form input[type="submit"] {
   width: 100px;
   padding: 10px;
   border-radius: 8px;
@@ -28,7 +47,8 @@ form button[type="submit"], form input[type="submit"] {
   transition: transform 0.2s, background 0.3s;
 }
 
-form input[type="submit"]:hover, form button[type="submit"]:hover {
+form input[type="submit"]:hover,
+form button[type="submit"]:hover {
   transform: scale(1.05);
   background: linear-gradient(135deg, #3e8e41, #4caf50);
 }
@@ -171,12 +191,12 @@ form input[type="submit"]:hover, form button[type="submit"]:hover {
   border-color: #4caf50;
   box-shadow: 0 0 6px rgba(76, 175, 80, 0.4);
 }
-tr {
+/* tr {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-}
+} */
 input {
   border: 0.5px solid gray;
   border-radius: 7px;
@@ -200,13 +220,30 @@ input {
   color: rgb(150, 148, 148);
   cursor: pointer;
 }
+#inicio{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: 0.5s;
+  color: black;
+}
+#inicio img{
+  transition: 0.5s;
+}
+#inicio img:hover{
+  transition: 0.5s;
+  transform: scale(1.1);
+}
 .BemVindo {
   margin-top: 10px;
   font-size: 30px;
   transition: 0.5s;
 }
 #loginGoogle {
-  display: flex;
+  /* display: flex; */
+  display: none;
   justify-content: center;
   align-items: center;
   width: 180px;
@@ -235,6 +272,7 @@ input {
   border: 1px solid #71bb74;
   box-shadow: 0 0 6px rgba(46, 70, 47, 0.4);
   cursor: pointer;
+  display: none;
 }
 .botaoS {
   display: flex;
@@ -280,4 +318,23 @@ input {
 #validarDKT {
   text-justify: initial;
   text-align: center;
+}
+
+#Botao_Ver_Detalhes{
+background-color: white;
+    color: #333;
+    border-color: #ccc;
+}
+#botaoAvaliarBairro {
+    background: linear-gradient(to right, #e2f5d9, #c3e0f7);
+    color: rgb(0, 0, 0);
+}
+#Botao_Ver_Detalhes, #botaoAvaliarBairro {
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9em;
+    transition: background-color 0.5s, border-color 0.5s;
+    border: 1px solid transparent;
 }

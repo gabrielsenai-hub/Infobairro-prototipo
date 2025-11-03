@@ -22,6 +22,7 @@ public class User {
     @Column(nullable = false)
     private String senha;
 
+    @Column(nullable = false)
     private LocalDate data_nascimento;
 
     @Column(nullable = false)

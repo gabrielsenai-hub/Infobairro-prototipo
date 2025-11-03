@@ -6,7 +6,9 @@
 td {
   padding: 10px;
 }
-
+body {
+  width: 100%;
+}
 header {
   background-color: #ffffff;
   box-shadow: 0px 0px 10px rgba(68, 68, 68, 0.808);
@@ -28,7 +30,116 @@ header img {
   margin: 0;
   height: 100%;
 }
+footer {
+  border-radius: 5px;
+  background: transparent;
+  height: max-content;
+  padding: 5px;
+  border-top: #424242a9 0.5px solid;
+}
 
+footer p {
+  transition: 0.5s;
+  font-weight: 400;
+}
+footer p:hover {
+  transition: 0.5s;
+  color: #236825;
+  cursor: pointer;
+}
+#info {
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+  transition: 0.5s;
+  justify-content: end;
+  margin-right: 20px;
+}
+#preferencias {
+  display: flex;
+  flex-direction: row;
+  height: max-content;
+  width: max-content;
+  margin-top: 20px;
+  gap: 20px;
+}
+#opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 23px;
+  justify-content: center;
+  width: max-content;
+}
+.opcao {
+  width: 35vh;
+  padding: 10px;
+  border-radius: 5px 5px;
+  transition: 0.5s;
+  text-align: start;
+}
+.opcao:hover,
+.opcao::after {
+  background-color: #68dd6c56;
+  cursor: pointer;
+  transition: 0.5s;
+  color: #236825;
+}
+#opcoesTela {
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  width: max-content;
+  overflow-x: auto;
+}
+#configTela {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 89vh;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.configpop {
+  z-index: 1500;
+  position: absolute;
+
+  bottom: 20px;
+  left: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  background: linear-gradient(135deg, #629ac7, #72a2ca);
+  border-radius: 5px;
+  transition: 0.5s;
+}
+.configpop:hover {
+  transition: 0.5s;
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #72a2ca, #629ac7);
+  cursor: pointer;
+}
+.configpop img {
+  height: 30px;
+}
+
+#bairrosNome {
+  background-color: #f2f2f2;
+  border-radius: 5px;
+  border: 1px solid #4caf50;
+  font-size: larger;
+  color: #4caf50;
+  transition: 0.5s;
+  padding: 10px;
+}
+#bairrosNome:hover {
+  cursor: pointer;
+  transition: 0.5s;
+  background-color: #4caf50;
+  color: #f2f2f2;
+}
 #container {
   width: 100%;
   display: flex;
@@ -83,7 +194,7 @@ header img {
   background: #4caf50;
   border: 1px solid #ccc;
   border-radius: 10px;
-  z-index: 999;
+  z-index: 3;
   padding: 5px;
 }
 .adminCardOpt:hover {
@@ -100,7 +211,7 @@ header img {
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   font-family: Arial, sans-serif;
-  z-index: 9999;
+  z-index: 4;
 }
 #card-header {
   background: #4caf50;
@@ -116,7 +227,7 @@ header img {
 }
 .hidden {
   display: none;
-  z-index: 9999;
+  z-index: 4;
 }
 #admin {
   position: absolute;
@@ -126,10 +237,204 @@ header img {
   background: white;
   border: 1px solid #ccc;
   border-radius: 10px;
-  z-index: 9999;
+  z-index: 4;
   display: none;
 }
 
 .adcBairro td {
   padding: 2px;
+}
+
+input[type="checkbox"]:hover + label {
+  cursor: pointer;
+  color: #4caf50;
+  transition: 0.5s;
+}
+input[type="checkbox"]:disabled + label {
+  cursor: initial;
+  color: black;
+  transition: 0.5s;
+}
+
+input[type="checkbox"]:checked {
+  accent-color: #4caf50;
+  color: #ffffff;
+  transition: 0.5s;
+}
+input[type="checkbox"]:checked + label {
+  color: #4caf50;
+  transition: 0.5s;
+}
+label {
+  transition: 0.5s;
+}
+h4 {
+  text-align: center;
+}
+.conteudo_principal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex-grow: 1;
+  padding: 30px;
+  padding-bottom: 0;
+  max-width: 1000px;
+  background-color: #ffffff;
+}
+
+.titulo_sobre {
+  font-size: 40px;
+  font-weight: bolder;
+  color: #000000;
+  margin-bottom: 30px;
+  padding-left: 0;
+  width: 100%;
+}
+
+.secao_sobre {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 60px;
+}
+
+.texto_sobre {
+  font-size: 20px;
+  color: #000000;
+  flex-basis: 45%;
+  min-width: 300px;
+  font-weight: bold;
+}
+
+.container_ilustracao {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-basis: 45%;
+  min-width: 300px;
+}
+
+.imagem_mapa {
+  width: 100%;
+  height: auto;
+  max-width: 400px;
+}
+
+.secao_sobre {
+  display: flex;
+  flex-direction: column;
+}
+
+.titulo_sobre {
+  margin-bottom: 30px;
+}
+.texto_sobre {
+  margin-top: 30px;
+}
+.secao_sobre,
+.secao_sobre > .container_ilustracao {
+  flex-basis: 45%;
+  margin-bottom: 30px;
+}
+.secao_mvv {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 30px;
+}
+
+.card_mvv {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 30%;
+  min-width: 250px;
+  margin-bottom: 20px;
+}
+
+.titulo_card {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+.texto_card {
+  font-size: 17px;
+  color: #000000;
+}
+.indicadorMini {
+  height: 35px;
+}
+#itensMinimizados {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
+}
+#itensMDireita {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.botoesMDireita {
+  display: flex;
+  flex-direction: row;
+}
+.info_Mini {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+#hudMinimizado {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: #636262 solid 1px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  position: absolute;
+  z-index: 9879;
+  height: max-content;
+  width: max-content;
+  bottom: 10px;
+  justify-content: center;
+  align-items: center;
+  justify-self: center;
+}
+#hudUltimoComentario {
+  padding: 10px;
+  padding-right: 100px;
+  border: #636262 1px solid;
+  border-radius: 7px;
+  overflow-x: auto;
+}
+
+.nota_principal {
+  color: #20744a;
+}
+#opcoesCell {
+  width: 100%;
+  height: max-content;
+  padding: 10px;
+  display: none;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+#opcoesCell img:hover {
+  transition: 0.5s;
+  cursor: pointer;
+  background-color: #0be66e;
+}
+#opcoesCell img {
+  transition: 0.5s;
+  padding: 5px;
+  border: #000000 1px solid;
+  border-radius: 5px;
+  height: 30px;
 }

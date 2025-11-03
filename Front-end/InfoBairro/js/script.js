@@ -1,204 +1,192 @@
-function loginWithGoogle() {
-  const oauthUrl = "http://localhost:8080/oauth2/authorization/google";
-  // essa é a URL que inicia o fluxo OAuth2 no seu backend
+// async function init() {
+//   try {
+//     await carregarUsuario();
+//   } catch (err) {
+//     console.error("Erro ao carregar usuário:", err);
+//     showAlert("Erro ao carregar usuário", "error", 3000);
+//   }
+// }
 
-  const janela = window.open.apply(oauthUrl, "Login com Google");
+// async function carregarUsuario() {
+//   try {
+//     const res = await fetch("http://localhost:8080/auth/user", {
+//       credentials: "include",
+//       headers: { Accept: "application/json" },
+//     });
 
-  // opcional: monitorar se a janela foi fechada
-  const timer = setInterval(() => {
-    if (janela.closed) {
-      clearInterval(timer);
-      console.log("Janela fechada, pode checar se o login foi concluído");
-    }
-  }, 500);
-}
+//     if (!res.ok) {
+//       console.error("Resposta do servidor:", res.status, res.statusText);
+//       showAlert("Erro no servidor: " + res.status, "error", 3000);
+//       return;
+//     }
 
-async function init() {
-  try {
-    await carregarUsuario();
-  } catch (err) {
-    console.error("Erro ao carregar usuário:", err);
-    showAlert("Erro ao carregar usuário", "error", 3000);
-  }
-}
+//     const data = await res.json();
 
-async function carregarUsuario() {
-  try {
-    const res = await fetch("http://localhost:8080/auth/user", {
-      // NÃO use no-cors
-      credentials: "include",
-      headers: { Accept: "application/json" },
-    });
+//     const div = document.getElementById("container");
+//     div.innerHTML = "";
 
-    if (!res.ok) {
-      console.error("Resposta do servidor:", res.status, res.statusText);
-      showAlert("Erro no servidor: " + res.status, "error", 3000);
-      return;
-    }
+//     if (data.admin == true)
+//       document.getElementById("admin").style.display = "block";
 
-    const data = await res.json();
-
-    const div = document.getElementById("container");
-    div.innerHTML = "";
-
-    if (data.admin == true)
-      document.getElementById("admin").style.display = "block";
-
-    if (
-      !data.rua ||
-      !data.cep ||
-      !data.bairro ||
-      !data.dataNascimento ||
-      !data.cidade
-    ) {
-      document.getElementsByClassName("login")[0].style.display = "none";
-      showAlert("Complete seu cadastro", "info", 3000);
-      div.innerHTML = `
-      <form id="complemento" style="
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      box-shadow: 0px 0px 10px rgba(121, 120, 120, 0.808);
-      border-radius: 10px;
-      padding: 15px;">
-      <h2 class="BemVindo">Complete seu cadastro</h2>
-      <div id="complementoCell">
-      <br>
-      <label for="cep">Insira o seu CEP:</label><br>
-      <input name="cep" type="number" id="cep" maxlength="8" placeholder="00000000" oninput="buscaCepComplemento(this)" required>
-      <br>
-      <label for="bairro">Insira o seu bairro:</label><br>
-      <input name="bairro" type="text" id="bairro" placeholder="Insira aqui o seu bairro" required>
-      <br>
-      <label for="rua">Insira a sua rua:</label><br>
-      <input name="rua" type="text" id="rua" placeholder="Insira aqui a sua rua" autocomplete="street-address" required>
-      <br>
-      <label for="cidade">Insira a sua cidade:</label><br>
-      <input name="cidade" type="text" id="cidade" placeholder="Insira aqui a sua cidade" required>
-      <br>
-      <label for="nascimento">Insira a sua data de nascimento:</label><br>
-      <input type="date" id="nascimento" required>
-      <br>
+//     if (
+//       !data.rua ||
+//       !data.cep ||
+//       !data.bairro ||
+//       !data.dataNascimento ||
+//       !data.cidade
+//     ) {
+//       document.getElementsByClassName("login")[0].style.display = "none";
+//       showAlert("Complete seu cadastro", "info", 3000);
+//       div.innerHTML = `
+//       <form id="complemento" style="
+//       display: flex;
+//       justify-content: center;
+//       align-items: center;
+//       flex-direction: column;
+//       box-shadow: 0px 0px 10px rgba(121, 120, 120, 0.808);
+//       border-radius: 10px;
+//       padding: 15px;">
+//       <h2 class="BemVindo">Complete seu cadastro</h2>
+//       <div id="complementoCell">
+//       <br>
+//       <label for="cep">Insira o seu CEP:</label><br>
+//       <input name="cep" type="number" id="cep" maxlength="8" placeholder="00000000" oninput="buscaCepComplemento(this)" required>
+//       <br>
+//       <label for="bairro">Insira o seu bairro:</label><br>
+//       <input name="bairro" type="text" id="bairro" placeholder="Insira aqui o seu bairro" required>
+//       <br>
+//       <label for="rua">Insira a sua rua:</label><br>
+//       <input name="rua" type="text" id="rua" placeholder="Insira aqui a sua rua" autocomplete="street-address" required>
+//       <br>
+//       <label for="cidade">Insira a sua cidade:</label><br>
+//       <input name="cidade" type="text" id="cidade" placeholder="Insira aqui a sua cidade" required>
+//       <br>
+//       <label for="nascimento">Insira a sua data de nascimento:</label><br>
+//       <input type="date" id="nascimento" required>
+//       <br>
       
-      </div>
-      <br>
-      <table id="complementoDKT">
-      <tr>
-      <td>
-    <label for="cep">Insira o seu CEP:</label><br>
-    <input name="cep" type="number" id="cep" maxlength="8" placeholder="00000000 (sem hifen)" oninput="buscarCep(this)" required>
-    </td>
-    <td>
-    <label for="bairro">Insira o seu bairro:</label><br>
-    <input name="bairro" type="text" id="bairro" placeholder="Insira aqui o seu bairro" required>
-    </td>
-    </tr>
-    <tr>
-    <td>
-    <label for="rua">Insira a sua rua:</label><br>
-    <input name="rua" type="text" id="rua" placeholder="Insira aqui a sua rua" autocomplete="street-address" required>
-    </td>
-    <td>
-    <label for="cidade">Insira a sua cidade:</label><br>
-    <input name="cidade" type="text" id="cidade" placeholder="Insira aqui a sua cidade" required>
-    </td>
-    <td>
-    <label for="nascimento">Insira a sua data de nascimento:</label><br>
-    <input type="date" id="nascimento" required>
-    </td>
-    </tr>
-    </table>
-    <input type="submit" id="salvar" value="Finalizar">
-      </form>
-      `;
-      document.getElementById("salvar").onclick = async () => {
-        const rua = document.getElementById("rua").value;
-        const cep = document.getElementById("cep").value;
-        const bairro = document.getElementById("bairro").value;
-        const cidade = document.getElementById("cidade").value;
-        const dataNascimento = document.getElementById("nascimento").value;
+//       </div>
+//       <br>
+//       <table id="complementoDKT">
+//       <tr>
+//       <td>
+//     <label for="cep">Insira o seu CEP:</label><br>
+//     <input name="cep" type="number" id="cep" maxlength="8" placeholder="00000000 (sem hifen)" oninput="buscarCep(this)" required>
+//     </td>
+//     <td>
+//     <label for="bairro">Insira o seu bairro:</label><br>
+//     <input name="bairro" type="text" id="bairro" placeholder="Insira aqui o seu bairro" required>
+//     </td>
+//     </tr>
+//     <tr>
+//     <td>
+//     <label for="rua">Insira a sua rua:</label><br>
+//     <input name="rua" type="text" id="rua" placeholder="Insira aqui a sua rua" autocomplete="street-address" required>
+//     </td>
+//     <td>
+//     <label for="cidade">Insira a sua cidade:</label><br>
+//     <input name="cidade" type="text" id="cidade" placeholder="Insira aqui a sua cidade" required>
+//     </td>
+//     <td>
+//     <label for="nascimento">Insira a sua data de nascimento:</label><br>
+//     <input type="date" id="nascimento" required>
+//     </td>
+//     </tr>
+//     </table>
+//     <input type="submit" id="salvar" value="Finalizar">
+//       </form>
+//       `;
+//       document.getElementById("salvar").onclick = async () => {
+//         const rua = document.getElementById("rua").value;
+//         const cep = document.getElementById("cep").value;
+//         const bairro = document.getElementById("bairro").value;
+//         const cidade = document.getElementById("cidade").value;
+//         const dataNascimento = document.getElementById("nascimento").value;
 
-        await fetch("http://localhost:8080/auth/user/complemento", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ rua, cep, bairro, cidade, dataNascimento }),
-        });
+//         await fetch("http://localhost:8080/auth/user/complemento", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           credentials: "include",
+//           body: JSON.stringify({ rua, cep, bairro, cidade, dataNascimento }),
+//         });
 
-        carregarUsuario(); // recarrega dados
-      };
-    } else {
-      // já está completo
-      trocarConteudo(`
-      <div id="map"></div>
-      <div id="admin">
-     <div class="adminCardOpt" onclick="adminCard()"><img src="./img/botaoLateral.png" style="width: 24px;"></div>
-      <div id="admin-card" class="admin-card hidden">
-      <div id="card-header"> <img src="./img/botaoLateralAdc.png" style="width: 20px; cursor: pointer;" onclick="adminCard()"> Adicionar Bairro</div>
-      <div id="card-body" class="hidden">
-        <form onsubmit="salvarBairro()">
-          <table class="adcBairro" id="formAdcBairro">
-            <tr>
-              <td>
-                <label>Nome:</label>
-              </td>
-              <td>
-                <input id="bairro-nome" type="text" />
-              </td>
-            </tr>
+//         carregarUsuario(); // recarrega dados
+//       };
+//     } else {
+//       // já está completo
+//       const acessos = document.getElementsByClassName("acesso");
+//       for (let i = 0; i < acessos.length; i++) {
+//         acessos[i].style.display = "none";
+//       }
 
-            <tr >
-              <td>
-                <label for="bairro-lat">Latitude:</label>
-              </td>
-              <td>
-                <input id="bairro-lat" type="number" step="any" />
-              </td>
-            </tr>
-            <tr">
-              <td>
+//       trocarConteudo(`
+//       <div id="map"></div>
+//       <div id="admin">
+//      <div class="adminCardOpt" onclick="adminCard()"><img src="./img/botaoLateral.png" style="width: 24px;"></div>
+//       <div id="admin-card" class="admin-card hidden">
+//       <div id="card-header"> <img src="./img/botaoLateralAdc.png" style="width: 20px; cursor: pointer;" onclick="adminCard()"> Adicionar Bairro</div>
+//       <div id="card-body" class="hidden">
+//         <form onsubmit="salvarBairro()">
+//           <table class="adcBairro" id="formAdcBairro">
+//             <tr>
+//               <td>
+//                 <label>Nome:</label>
+//               </td>
+//               <td>
+//                 <input id="bairro-nome" type="text" />
+//               </td>
+//             </tr>
 
-                <label for="bairro-lon">Longitude:</label>
-              </td>
-              <td>
+//             <tr >
+//               <td>
+//                 <label for="bairro-lat">Latitude:</label>
+//               </td>
+//               <td>
+//                 <input id="bairro-lat" type="number" step="any" />
+//               </td>
+//             </tr>
+//             <tr">
+//               <td>
 
-                <input id="bairro-lon" type="number" step="any" />
-              </td>
-            </tr>
-          </table>
-          <input type="submit" value="Salvar" />
-        </form>
-      </div>
-      </div>
-    </div>
-`);
-    }
-  } catch (err) {
-    console.error("Erro ao conectar:", err);
-    showAlert(
-      "Não foi possível conectar ao servidor. Veja console.",
-      "error",
-      3000
-    );
-  }
-}
+//                 <label for="bairro-lon">Longitude:</label>
+//               </td>
+//               <td>
 
+//                 <input id="bairro-lon" type="number" step="any" />
+//               </td>
+//             </tr>
+//           </table>
+//           <input type="submit" value="Salvar" />
+//         </form>
+//       </div>
+//       </div>
+//     </div>
+// `);
+//     }
+//   } catch (err) {
+//     console.error("Erro ao conectar:", err);
+//     showAlert(
+//       "Não foi possível conectar ao servidor. Veja console.",
+//       "error",
+//       3000
+//     );
+//   }
+// }
 
 function trocarConteudo(novoHTML) {
   const container = document.getElementById("container");
   // adiciona a animação de saída
-  container.classList.add("fade-out");
+  container.classList.add("fade-outY");
 
   // espera a transição terminar
   setTimeout(() => {
     container.innerHTML = novoHTML; // troca conteúdo
-    container.classList.remove("fade-out");
-    container.classList.add("fade-in");
+    container.classList.remove("fade-outY");
+    container.classList.add("fade-inY");
 
     // remove a classe depois que a animação rodar
     setTimeout(() => {
-      container.classList.remove("fade-in");
+      container.classList.remove("fade-inY");
     }, 400);
     if (novoHTML.includes(`<div id="map"></div>`)) {
       initMap();
@@ -228,5 +216,46 @@ function showAlert(message, type, duration) {
     alertBox.classList.remove("show");
   }, duration);
 }
+function sobre() {
 
+  document.getElementById("container").style.backgroundColor = "white";
+  trocarConteudo(`
+        <main class="conteudo_principal">
+        <section class="secao_sobre">
+              <div class="container_ilustracao">
+                <img src="../img/imagem_sobre.png" alt="Mapa ilustrativo" class="imagem_mapa">
+            </div>
+            <h2 class="titulo_sobre">Sobre o InfoBairro</h2>
+            <p class="texto_sobre">
+                O InfoBairro nasceu com a ideia de <br> ajudar as pessoas a conhecer melhor <br> os bairros antes de morar, investir ou <br> visitar. 
+                Aqui você encontra avaliações <br> reais e dados confiáveis 
+                sobre <br> qualidade de vida, transporte, <br> segurança e lazer.
+            </p>
+
+          
+        </section>
+
+
+
+        <section class="secao_mvv">
+            <div class="card_mvv">
+                <h3 class="titulo_card">Nossa missão</h3>
+                <p class="texto_card">Ajudar pessoas a conhecer e escolher melhores bairros.</p>
+            </div>
+
+            <div class="card_mvv">
+                <h3 class="titulo_card">Nossa visão</h3>
+                <p class="texto_card">Ser a principal referência em avaliações de bairros.</p>
+            </div>
+
+            <div class="card_mvv">
+                <h3 class="titulo_card">Nossos valores</h3>
+                <p class="texto_card">Transparência, confiança e comprometimento.</p>
+            </div>
+        </section>
+
+    </main>
+
+`);
+}
 var map;

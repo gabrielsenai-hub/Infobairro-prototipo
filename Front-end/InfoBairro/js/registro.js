@@ -1,8 +1,8 @@
-const erro = localStorage.getItem("Erro")
-const spam1 = localStorage.getItem("Spam1")
-const spam2 = localStorage.getItem("Spam2")
+const erro = localStorage.getItem("Erro");
+const spam1 = localStorage.getItem("Spam1");
+const spam2 = localStorage.getItem("Spam2");
 
-console.log(`${erro}\n\n${spam1}\n\n${spam2}`)
+console.log(`${erro}\n\n${spam1}\n\n${spam2}`);
 
 async function cadastrar(event) {
   // Se chamado por onsubmit de um form, previne o reload
@@ -17,7 +17,7 @@ async function cadastrar(event) {
   let bairro = "";
   let rua = "";
   let cidade = "";
-  let dataNascimento = "";
+  let data_nascimento = "";
 
   // usar if/else fica mais legível
   if (window.innerWidth <= 730) {
@@ -29,7 +29,7 @@ async function cadastrar(event) {
     bairro = document.getElementById("bairroC")?.value.trim() ?? "";
     rua = document.getElementById("ruaC")?.value.trim() ?? "";
     cidade = document.getElementById("cidadeC")?.value.trim() ?? "";
-    dataNascimento = document.getElementById("dataNascimentoC")?.value ?? "";
+    data_nascimento = document.getElementById("dataNascimentoC")?.value ?? "";
   } else {
     nome = document.getElementById("nomeCT")?.value.trim() ?? "";
     email = document.getElementById("emailCT")?.value.trim() ?? "";
@@ -39,7 +39,7 @@ async function cadastrar(event) {
     bairro = document.getElementById("bairroCT")?.value.trim() ?? "";
     rua = document.getElementById("ruaCT")?.value.trim() ?? "";
     cidade = document.getElementById("cidadeCT")?.value.trim() ?? "";
-    dataNascimento = document.getElementById("dataNascimentoCT")?.value ?? "";
+    data_nascimento = document.getElementById("dataNascimentoCT")?.value ?? "";
   }
 
   // validação de senha: interrompe se não bate
@@ -49,7 +49,16 @@ async function cadastrar(event) {
   }
 
   // montar payload
-  const payload = { nome, email, senha, cep, bairro, rua, cidade, dataNascimento };
+  const payload = {
+    nome,
+    email,
+    senha,
+    cep,
+    bairro,
+    rua,
+    cidade,
+    data_nascimento,
+  };
 
   try {
     const res = await fetch("http://localhost:8080/auth/register", {
@@ -79,15 +88,13 @@ async function cadastrar(event) {
       }
       showAlert("Cadastro realizado com sucesso", "success", 3000);
 
-      // Opcional: armazenar resposta útil (token, user id). NÃO armazene senha.
-      localStorage.setItem("Spam1", JSON.stringify(body));
-
       // atualizar UI
-      loginTela();
-      trocarConteudo(`... seu template ...`);
+      trocarConteudo(
+        `<div id="map"></div> <div id="admin"> <div class="adminCardOpt" onclick="adminCard()"><img src="./img/botaoLateral.png" style="width: 24px;"></div> <div id="admin-card" class="admin-card hidden"> <div id="card-header"> <img src="./img/botaoLateralAdc.png" style="width: 20px; cursor: pointer;" onclick="adminCard()"> Adicionar Bairro</div> <div id="card-body" class="hidden"> <form onsubmit="salvarBairro()"> <table class="adcBairro" id="formAdcBairro"> <tr> <td> <label>Nome:</label> </td> <td> <input id="bairro-nome" type="text" /> </td> </tr> <tr > <td> <label for="bairro-lat">Latitude:</label> </td> <td> <input id="bairro-lat" type="number" step="any" /> </td> </tr> <tr"> <td> <label for="bairro-lon">Longitude:</label> </td> <td> <input id="bairro-lon" type="number" step="any" /> </td> </tr> </table> <input type="submit" value="Salvar" /> </form> </div> </div> </div>`
+      );
     } else {
       // se o servidor retornou erro, mostrar mensagem
-      const mensagem = (body && body.message) ? body.message : String(body);
+      const mensagem = body && body.message ? body.message : String(body);
       showAlert(mensagem, "error", 3000);
       localStorage.setItem("Erro", mensagem);
     }
@@ -97,6 +104,16 @@ async function cadastrar(event) {
     showAlert("Erro de rede: " + err.message, "error", 3000);
   }
 }
+
+// function loginWithGoogle() {
+//   const oauthUrl = "http://localhost:8080/oauth2/authorization/google";
+//   const acessos = document.getElementsByClassName("loginBtn")[0];
+
+//   // Abre o fluxo OAuth2 em uma nova janela (popup)
+//   window.open(oauthUrl);
+//   acessos.style.display = "none";
+
+// }
 
 async function login() {
   const form = document.getElementsByClassName("FormLogin")[0];
@@ -108,6 +125,7 @@ async function login() {
 
   const submitBtn = form.querySelector('[type="submit"]');
   if (submitBtn) submitBtn.disabled = true;
+  let status;
 
   try {
     // pega valores diretamente (sem FormData)
@@ -124,7 +142,7 @@ async function login() {
     }
 
     const payload = { email, senha };
-
+    console.log("Payload:", JSON.stringify(payload));
     const res = await fetch("http://localhost:8080/auth/login", {
       method: "POST",
       headers: {
@@ -149,8 +167,9 @@ async function login() {
         const txt = await res.text();
         if (txt) errMsg = txt;
       }
+      status = res.status;
       showAlert(errMsg, "error", 3000);
-      console.error("login failed", res.status, res.statusText);
+      console.log("login failed", res.status, res.statusText);
       return;
     }
 
@@ -168,7 +187,8 @@ async function login() {
     }
   } catch (err) {
     console.error("Erro na requisição de login:", err);
-    showAlert("Erro ao conectar com o servidor. Veja console.", "error", 3000);
+    if (status == 401) showAlert("Senha incorreta!", "error", 3000);
+    else showAlert("Erro ao conectar com o servidor.", "error", 3000);
   } finally {
     form.dataset.sending = "false";
     if (submitBtn) submitBtn.disabled = false;
@@ -202,7 +222,7 @@ function cadastrarTela() {
     <br>
     <br>
     <label for="cepC">Insira o seu CEP:</label> <br>
-    <input name="cep" type="number" id="cepC" placeholder="00000-000" maxlength="8" oninput="buscaCep(this)"  required>
+    <input name="cep" type="number" id="cepC" placeholder="00000000(sem hífen)" maxlength="8" oninput="buscaCep(this)"  required>
     <br>
     <br>
     <label for="bairroC">Insira o seu bairro:</label> <br>
@@ -218,7 +238,7 @@ function cadastrarTela() {
     <br>
     <br>
     <label for="dataNascimentoC">Data de Nascimento:</label><br>
-    <input type="date" id="dataNascimentoC" required>
+    <input type="date" id="dataNascimentoC" required min="1920-01-01" max="2008-01-01">
     <br>
     <br>
       <label for="senhaC">Defina uma senha:</label> <br>
@@ -245,7 +265,7 @@ function cadastrarTela() {
     </form>
 
 
-    
+
     <form class="FCadastro" onsubmit="cadastrar(event)">
     <table id="CadDKT">
     <tr>
@@ -281,7 +301,7 @@ function cadastrarTela() {
     <tr>
     <td>
     <label for="dataNascimentoCT">Data de Nascimento:</label><br>
-    <input type="date" id="dataNascimentoCT" required min="1920-01-01" max="2022-01-01">
+    <input type="date" id="dataNascimentoCT" required min="1920-01-01" max="2008-01-01">
     </td>
     </tr>
         <tr>
@@ -369,19 +389,15 @@ function loginTela() {
     
 
     `);
-
 }
 
 function carrosselLogin() {
   for (let j = 0; j < 2; j++) {
     for (let i = 0; i < 30; i++) {
-
       var casa = document.createElement("img");
       casa.src = "../img/Casa1.png";
       document.getElementsByClassName("repeticaoCasa1")[j].appendChild(casa);
-
     }
-
   }
 }
 function voltarInicio() {
@@ -391,3 +407,203 @@ function voltarInicio() {
 
   trocarConteudo(`<div id="map"></div>`);
 }
+logout();
+function logout() {
+  fetch("http://localhost:8080/auth/logout", {
+    method: "POST",
+    credentials: "include",
+  }).then(() => {
+    document.cookie = "usuarioLogado=; max-age=0; path=/";
+    document.getElementsByClassName(".loginBtn")[0].style.display = "block";
+  });
+}
+async function verificarLogin() {
+  try {
+    const response = await fetch("http://localhost:8080/auth/status", {
+      method: "GET",
+      credentials: "include", // 🔑 envia cookie JSESSIONID
+    });
+
+    if (!response.ok) throw new Error("Falha ao verificar login");
+
+    const data = await response.json();
+
+    if (data.logado) {
+      console.log("Usuário logado:", data.email);
+      document.querySelector(".loginBtn").style.display = "none";
+    } else {
+      console.log("Usuário não logado");
+      document.querySelector(".loginBtn").style.display = "block";
+    }
+  } catch (err) {
+    console.error("Erro ao verificar login:", err);
+  }
+}
+
+function configTela() {
+  trocarConteudo(`
+  <div id="configTela">
+    <h1>Configurações</h1>
+    <div id="preferencias">
+      <div id="opcoes">
+        <div class="opcao" onclick="trocarOpcoes(0)">
+          <b>Dados Pessoais</b>
+        </div>
+        <div class="opcao" onclick="trocarOpcoes(1)">
+          <b>Personalização</b>
+        </div>
+        <div class="opcao" onclick="trocarOpcoes(2)">
+          <b>Notificações</b>
+        </div>
+        <div class="opcao" onclick="trocarOpcoes(3)">
+          <b>Segurança</b>
+        </div>
+        <div class="opcao" onclick="trocarOpcoes(4)">
+          <b>Outros</b>
+        </div>
+
+        </div>
+      <div id="opcoesTela"></div>
+    </div>
+    <div id="opcoesCell">
+    <img src="../img/DadosPessoais.png" onclick="trocarOpcoes(0)">
+    <img src="../img/Personalização.png" onclick="trocarOpcoes(1)">
+    <img src="../img/notificacao.png" onclick="trocarOpcoes(2)">
+    <img src="../img/seguranca.png" onclick="trocarOpcoes(3)">
+    <img src="../img/outros.png" onclick="trocarOpcoes(4)">
+    </div>
+  </div>`);
+}
+
+function trocarOpcoes(i) {
+  var tela = [
+    `
+    <h4> Dados Pessoais:</h4>
+    <table>
+    <tr>
+      <td>
+        <label for="Nome">Nome:</label>
+      </td>
+      <td>
+        <label for="Email">Email:</label><br>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input type="text" value="s" id="Nome" disabled/>
+      </td>
+      <td>
+         <input type="Email" value="@gmail" id="Email" disabled/>
+      </td>
+      </table>
+      <hr>
+      <br>
+      <h4>Endereço</h4>
+      
+      <table>
+        <tr>
+          <td>
+            <label for="cepEditar">CEP:</label>
+          </td>
+          <td>
+            <label for="bairroEditar">Bairro:</label>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="number" id="cepEditar" disabled/>
+          </td>
+          <td>
+            <input type="text" id="bairroEditar" disabled/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="ruaEditar">Rua:</label>
+          </td>
+          <td>
+            <label for="cidadeEditar">Cidade:</label>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="text" id="ruaEditar" disabled/>
+          </td>
+          <td>
+            <input type="text" id="cidadeEditar" disabled/>
+          </td>
+        </tr>
+        
+      </table>
+    `,
+    `
+    <h4 style="text-align:center; margin-bottom: 20px">Categorias que me satisfazem:</h4>
+<table>
+  <tr>
+    <td>
+      <input type="checkbox" id="segurancaCheck" disabled>
+      <label for="segurancaCheck">Segurança</label>
+    </td>
+    <td>
+      <input type="checkbox" id="transporteCheck" disabled>
+      <label for="transporteCheck">Transporte</label>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <input type="checkbox" id="infraestruturaCheck" disabled>
+      <label for="infraestruturaCheck">Infraestrutura</label>
+    </td>
+    <td>
+      <input type="checkbox" id="educacaoCheck" disabled>
+      <label for="educacaoCheck">Educação</label>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <input type="checkbox" id="saudeCheck" disabled>
+      <label for="saudeCheck">Saúde</label>
+    </td>
+    <td>
+      <input type="checkbox" id="comercioCheck" disabled>
+      <label for="comercioCheck">Comércio</label>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <input type="checkbox" id="lazerCheck" disabled>
+      <label for="lazerCheck">Lazer</label>
+    </td>
+    <td></td>
+  </tr>
+</table>
+    `,
+    ``
+  ];
+
+  const telaOpt = document.getElementById("opcoesTela");
+
+  if (telaOpt.innerHTML !== tela[i]) {
+    telaOpt.classList.add("fade-out");
+
+    setTimeout(() => {
+
+      if (i != 0) {
+        telaOpt.style.justifyContent = "center";
+        telaOpt.style.alignItems = "center";
+      } else {
+        telaOpt.style.justifyContent = "initial";
+        telaOpt.style.alignItems = "initial";
+      }
+
+      telaOpt.innerHTML = tela[i];
+      telaOpt.classList.remove("fade-out");
+      telaOpt.classList.add("fade-in");
+    }, 300); // tempo do fade-out (ajuste conforme o CSS)
+  } else {
+    telaOpt.innerHTML = tela[i];
+  }
+}
+
+// Executa ao carregar a página
+window.addEventListener("load", verificarLogin);

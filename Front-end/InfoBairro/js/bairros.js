@@ -2,7 +2,7 @@ function adminCard() {
   const adminTela = document.getElementById("admin");
   const adminButton = document.getElementsByClassName("adminCardOpt")[0];
   const hiddenEls = document.getElementsByClassName("hidden");
- 
+
   // adiciona animação de saída
   adminTela.classList.remove("fade-inX");
   adminTela.classList.add("fade-outX");
@@ -58,6 +58,7 @@ async function salvarBairro() {
     showAlert("Erro ao salvar bairro", "error", 3000);
   }
 }
+
 function initMap() {
   if (map) {
     map.remove();
@@ -72,14 +73,24 @@ function initMap() {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>',
   }).addTo(map);
+
   fetch("http://localhost:8080/auth/bairros")
     .then((res) => res.json())
     .then((data) => {
       data.forEach((bairro) => {
+        // Cria um ícone HTML com o nome do bairro
         console.log(bairro);
-        L.marker([bairro.latitude, bairro.longitude])
-          .addTo(map)
-          .bindPopup(bairro.nome);
+        const nomeIcon = L.divIcon({
+          className: "nome-bairro", // classe CSS (para estilizar)
+          html: `<button id="bairrosNome" onclick='hudAvaliar(${JSON.stringify(bairro)})'>${bairro.nome}</button>`,
+          iconSize: [100, 20], // tamanho do “bloco” de texto
+          iconAnchor: [50, 10], // centraliza o nome na coordenada
+        });
+
+        // Adiciona o nome ao mapa como marcador textual
+        L.marker([bairro.latitude, bairro.longitude], { icon: nomeIcon }).addTo(
+          map
+        );
       });
     });
 
@@ -88,7 +99,7 @@ function initMap() {
   map.on("locationfound", function (e) {
     L.marker(e.latlng)
       .addTo(map)
-      .bindPopup(`${e.latlng.lat}, ${e.latlng.lng}`)
+      .bindPopup(`<b style = "color: #629ac7">Você está aqui!</b>`)
       .openPopup();
   });
 
@@ -96,9 +107,14 @@ function initMap() {
     alert("Não foi possível acessar sua localização.");
   });
 }
+
 setTimeout(() => {
   initMap();
 }, 500);
 var map;
+
+function hudAvaliar(bairro) {
+  
+}
 
 initMap();

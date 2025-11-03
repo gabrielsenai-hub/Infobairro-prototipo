@@ -141,45 +141,45 @@ function buscaCep(cepC) {
       .catch((err) => console.warn("Erro ao buscar CEP:", err));
   }
 }
-function buscaCepComplemento(cepC) {
-  var form = "";
-  if(window.innerWidth <= 730) {
+// function buscaCepComplemento(cepC) {
+//   var form = "";
+//   if(window.innerWidth <= 730) {
     
-    form = document.getElementById("complementoCell");
-  }
-  else {
-    form = document.getElementById("complementoDKT");
-  }
+//     form = document.getElementById("complementoCell");
+//   }
+//   else {
+//     form = document.getElementById("complementoDKT");
+//   }
 
-  if (!form) {
-  alert("Formulário #FCadastro não encontrado!");
-}
+//   if (!form) {
+//   alert("Formulário #FCadastro não encontrado!");
+// }
 
-  const cep = cepC.value.replace(/\D/g, ""); // só números
-  if (cep.length === 8) {
-    fetch(`https://viacep.com.br/ws/${cep}/json/`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.erro) {
-          const mapCampos = {
-            rua: "logradouro",
-            bairro: "bairro",
-            cidade: "localidade",
-          };
+//   const cep = cepC.value.replace(/\D/g, ""); // só números
+//   if (cep.length === 8) {
+//     fetch(`https://viacep.com.br/ws/${cep}/json/`)
+//       .then((res) => res.json())
+//       .then((data) => {
+//         if (!data.erro) {
+//           const mapCampos = {
+//             rua: "logradouro",
+//             bairro: "bairro",
+//             cidade: "localidade",
+//           };
 
-          Object.keys(mapCampos).forEach((campoForm) => {
-            const input = form.querySelector(`input[name="${campoForm}"]`);
-            if (input) {
-              input.value = data[mapCampos[campoForm]] || "";
-              console.warn(`Campo "${data[mapCampos[campoForm]]}" substituido com sucesso.`);
-            } else {
-            }
-          });
-        } else {
-          console.warn(`CEP não encontrado: ${cep}`);
-        }
-      })
-      .catch((err) => console.warn("Erro ao buscar CEP:", err));
-  }
-}
+//           Object.keys(mapCampos).forEach((campoForm) => {
+//             const input = form.querySelector(`input[name="${campoForm}"]`);
+//             if (input) {
+//               input.value = data[mapCampos[campoForm]] || "";
+//               console.warn(`Campo "${data[mapCampos[campoForm]]}" substituido com sucesso.`);
+//             } else {
+//             }
+//           });
+//         } else {
+//           console.warn(`CEP não encontrado: ${cep}`);
+//         }
+//       })
+//       .catch((err) => console.warn("Erro ao buscar CEP:", err));
+//   }
+// }
 
