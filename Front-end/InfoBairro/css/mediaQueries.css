@@ -238,11 +238,11 @@
   .subtitulo_bairro{
     font-size: small;
   }
-  .infoMini{
+  .info_Mini{
     flex-direction: column;
   }
-  .configPop{
-    top: 20px;
+  .configpop{
+    top: 130px;
     right: 30px;
     left: initial;
     bottom: initial;
