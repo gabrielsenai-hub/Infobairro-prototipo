@@ -427,6 +427,8 @@ h4 {
   gap: 20px;
 }
 #opcoesCell img:hover {
+  box-shadow: 1px 1px 16px 1px rgb(184, 182, 182);
+  transform:translateY(1.5px);
   transition: 0.5s;
   cursor: pointer;
   background-color: #0be66e;
@@ -437,4 +439,75 @@ h4 {
   border: #000000 1px solid;
   border-radius: 5px;
   height: 30px;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    height: 23px;
+    width: 48px;
+}
+
+.switch input {
+    /* Esconde o input checkbox padrão */
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    /* Adiciona transição suave */
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 15px;
+    width: 15px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+/* Muda a cor de fundo quando o input está marcado (checked) */
+input:checked + .slider {
+    background-color: #629ac7;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #629ac7;
+}
+
+/* Move a "bolinha" (slider::before) quando o input está marcado */
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Estilo para cantos arredondados */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+.outrosBtn{
+  transition: 0.5s;
+}
+.outrosBtn:hover{
+  color: #20744a;
+  cursor: pointer;
+  transition: 0.5s;
 }

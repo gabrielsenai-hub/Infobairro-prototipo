@@ -578,7 +578,58 @@ function trocarOpcoes(i) {
   </tr>
 </table>
     `,
-    ``
+    `<h4> Controle sobre alertas</h4>
+    
+    <table>
+    <tr>
+    <td>
+      <input type="checkbox" id="notf_emails_avl" disabled>
+      <label for="notf_emails_avl">Receber emails com novas avaliações no seu bairro favorito</label>
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <input type="checkbox" id="notf_respostas_avl" disabled>
+      <label for="notf_respostas_avl">Notificações sobre respostas em suas avaliação</label>
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <input type="checkbox" id="newsletter" disabled>
+      <label for="newsletter">Newsletter com dicas e novidades</label>
+    </td>
+    </tr>
+    </table>
+    `,
+    `<h4>Proteção de conta</h4>
+    <table>
+      <tr>
+        <td>
+          <label for="autToggle">Autenticação 2FA</label>
+        </td>
+        <td>
+          <label class="switch">
+            <input type="checkbox" id="autToggle" onclick="togglePrivacidade()">
+            <span class="slider round"></span>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="anonimoToggle">Tornar avaliações anônimas</label>
+        </td>
+                <td>
+          <label class="switch">
+            <input type="checkbox" id="anonimoToggle" onclick="togglePrivacidade()">
+            <span class="slider round"></span>
+          </label>
+        </td>
+      </tr>
+    </table>
+    `,
+    `<h4 class="outrosBtn" onclick="ajuda()">Central de ajuda</h4><br>
+    <h4 class="outrosBtn" onclick="termos()">Termos de uso e política de privacidade</h4><br>
+    <h4 class="outrosBtn" onclick="versaoSite()">Versão do site</h4>`,
   ];
 
   const telaOpt = document.getElementById("opcoesTela");
@@ -587,7 +638,6 @@ function trocarOpcoes(i) {
     telaOpt.classList.add("fade-out");
 
     setTimeout(() => {
-
       if (i != 0) {
         telaOpt.style.justifyContent = "center";
         telaOpt.style.alignItems = "center";
@@ -603,6 +653,30 @@ function trocarOpcoes(i) {
   } else {
     telaOpt.innerHTML = tela[i];
   }
+}
+
+function togglePrivacidade() {
+  const autToggler = document.getElementById('autToggle');
+  const anonimoToggler = document.getElementById('anonimoToggle');
+
+// Adiciona um "ouvinte de evento" para o clique/mudança de estado
+autToggler.addEventListener('change', function() {
+    // Verifica se o switch está marcado (ligado)
+    if (this.checked) {
+        console.log('Status aut: Ligado');
+      } else {
+      console.log('Status aut: Desligado');
+    }
+});
+anonimoToggler.addEventListener('change', function() {
+    // Verifica se o switch está marcado (ligado)
+    if (this.checked) {
+        console.log('Status anonimo: Ligado');
+      } else {
+      console.log('Status anonimo: Desligado');
+    }
+});
+  
 }
 
 // Executa ao carregar a página
