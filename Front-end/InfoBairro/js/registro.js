@@ -466,11 +466,11 @@ function configTela() {
       <div id="opcoesTela"></div>
     </div>
     <div id="opcoesCell">
-    <img src="../img/DadosPessoais.png" onclick="trocarOpcoes(0)">
-    <img src="../img/Personalização.png" onclick="trocarOpcoes(1)">
-    <img src="../img/notificacao.png" onclick="trocarOpcoes(2)">
-    <img src="../img/seguranca.png" onclick="trocarOpcoes(3)">
-    <img src="../img/outros.png" onclick="trocarOpcoes(4)">
+    <img src="./img/DadosPessoais.png" onclick="trocarOpcoes(0)">
+    <img src="./img/Personalização.png" onclick="trocarOpcoes(1)">
+    <img src="./img/notificacao.png" onclick="trocarOpcoes(2)">
+    <img src="./img/seguranca.png" onclick="trocarOpcoes(3)">
+    <img src="./img/outros.png" onclick="trocarOpcoes(4)">
     </div>
   </div>`);
 }
