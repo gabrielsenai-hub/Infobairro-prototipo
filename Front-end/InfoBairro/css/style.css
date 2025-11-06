@@ -78,27 +78,66 @@ footer p:hover {
   text-align: start;
 }
 .opcao:hover,
-.opcao::after {
+.opcao.ativo {
   background-color: #68dd6c56;
   cursor: pointer;
   transition: 0.5s;
   color: #236825;
 }
+
 #opcoesTela {
   display: flex;
   flex-direction: column;
   height: 300px;
-  width: max-content;
+  width: 100vw;
   overflow-x: auto;
 }
-#configTela {
+#headerConfig {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+#configDKT h1 + img:hover {
+  transition: 0.5s;
+  scale: 1.1;
+  cursor: pointer;
+  background-color: transparent;
+}
+#configDKT h1 + img {
+  margin-left: 30px;
+  position: absolute;
+  right: 21px;
+  background-color: #8ff5c2;
+  transition: 0.5s;
+  height: 20px;
+  border-radius: 5px;
+  padding: 5px;
+  border: 1px solid black;
+}
+
+#configDKT {
+  display: none;
+  background-color: white;
+  position: absolute;
+  height: max-content;
+  width: max-content;
+  padding: 20px;
+  z-index: 10000;
+  left: 10px;
+  bottom: 10px;
+  border: #000000 1px dashed;
+  border-radius: 10px;
+  box-shadow: 1px 1px 2px 1px gray;
+}
+
+.configTela {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 89vh;
-  width: 100%;
-  flex-wrap: wrap;
+  height: max-content;
 }
 .configpop {
   z-index: 1500;
@@ -181,7 +220,10 @@ footer p:hover {
   transform: translateY(-20px);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
-
+.repeticaoCasa1 {
+  display: flex;
+  flex-direction: column;
+}
 .custom-alert.show {
   opacity: 1;
   transform: translateY(0);
@@ -418,7 +460,7 @@ h4 {
   color: #20744a;
 }
 #opcoesCell {
-  width: 100%;
+  width: -webkit-fill-available;
   height: max-content;
   padding: 10px;
   display: none;
@@ -426,87 +468,100 @@ h4 {
   justify-content: center;
   gap: 20px;
 }
-#opcoesCell img:hover {
+.opcaoCell:hover, .ativoCell {
   box-shadow: 1px 1px 16px 1px rgb(184, 182, 182);
-  transform:translateY(1.5px);
+  transform: translateY(1.5px);
   transition: 0.5s;
   cursor: pointer;
-  background-color: #0be66e;
+  background-color: #68dd6c56;
 }
-#opcoesCell img {
+.opcaoCell{
   transition: 0.5s;
   padding: 5px;
   border: #000000 1px solid;
   border-radius: 5px;
   height: 30px;
 }
+
+#opcoesTela input[type="checkbox"]+label{
+  width: 200px;
+  height: max-content;
+  word-break: break-all;
+}
+#termosTXT{
+text-align: justify;
+height: 90%;
+width: min-content;
+}
 .switch {
-    position: relative;
-    display: inline-block;
-    height: 23px;
-    width: 48px;
+  position: relative;
+  display: inline-block;
+  height: 23px;
+  width: 48px;
 }
 
 .switch input {
-    /* Esconde o input checkbox padrão */
-    opacity: 0;
-    width: 0;
-    height: 0;
+  /* Esconde o input checkbox padrão */
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
-
+#NomeEditar, #EmailEditar{
+  width: -webkit-fill-available;
+}
 .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    /* Adiciona transição suave */
-    -webkit-transition: .4s;
-    transition: .4s;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  /* Adiciona transição suave */
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
-    position: absolute;
-    content: "";
-    height: 15px;
-    width: 15px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
+  position: absolute;
+  content: "";
+  height: 15px;
+  width: 15px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 /* Muda a cor de fundo quando o input está marcado (checked) */
 input:checked + .slider {
-    background-color: #629ac7;
+  background-color: #629ac7;
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #629ac7;
+  box-shadow: 0 0 1px #629ac7;
 }
 
 /* Move a "bolinha" (slider::before) quando o input está marcado */
 input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
 }
 
 /* Estilo para cantos arredondados */
 .slider.round {
-    border-radius: 34px;
+  border-radius: 34px;
 }
 
 .slider.round:before {
-    border-radius: 50%;
+  border-radius: 50%;
 }
-.outrosBtn{
+.outrosBtn {
   transition: 0.5s;
 }
-.outrosBtn:hover{
+.outrosBtn:hover {
   color: #20744a;
   cursor: pointer;
   transition: 0.5s;

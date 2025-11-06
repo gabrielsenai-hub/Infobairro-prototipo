@@ -346,14 +346,21 @@ function cadastrarTela() {
     `);
 }
 function loginTela() {
+  // carrosselLogin(document.getElementsByClassName("repeticaoCasa1")[0]);
+  // carrosselLogin(document.getElementsByClassName("repeticaoCasa1")[1]);
   document.getElementById("entrar").style.display = "none";
   document.getElementById("cadastrar").style.display = "block";
   document.getElementById("voltar").style.display = "block";
+
   trocarConteudo(`
     
     <div class="Ilogin">
     <div class="carrossel1">
-          <div class="repeticaoCasa1" onload="carrosselLogin()">    
+          <div class="repeticaoCasa1"> 
+          <img src="./img/casaRep.png"/> 
+          <img src="./img/casaRep.png"/> 
+          <img src="./img/casaRep.png"/> 
+          <img src="./img/casaRep.png"/> 
     </div>
     </div>
     
@@ -384,22 +391,21 @@ function loginTela() {
 <button id="loginGoogle" onclick="loginWithGoogle()"><img src="./img/google.png" alt="Google" width="30px" height="30px">Entrar com Google</button>
 </div>            
 <div class="carrossel1" id="carrossel1-1">
-<div class="repeticaoCasa1" onload="carrosselLogin()></div>
+<div class="repeticaoCasa1"></div>
     </div>
     
 
     `);
 }
 
-function carrosselLogin() {
-  for (let j = 0; j < 2; j++) {
-    for (let i = 0; i < 30; i++) {
-      var casa = document.createElement("img");
-      casa.src = "../img/Casa1.png";
-      document.getElementsByClassName("repeticaoCasa1")[j].appendChild(casa);
-    }
+function carrosselLogin(elemento) {
+  for (let i = 0; i < 30; i++) {
+    const img = document.createElement("img"); // cria o elemento
+    img.src = `./img/Casa1.jpg`; // define o caminho da imagem
+    elemento.appendChild(img); // adiciona ao elemento
   }
 }
+
 function voltarInicio() {
   document.getElementById("entrar").style.display = "block";
   document.getElementById("cadastrar").style.display = "block";
@@ -407,7 +413,6 @@ function voltarInicio() {
 
   trocarConteudo(`<div id="map"></div>`);
 }
-logout();
 function logout() {
   fetch("http://localhost:8080/auth/logout", {
     method: "POST",
@@ -441,59 +446,75 @@ async function verificarLogin() {
 }
 
 function configTela() {
-  trocarConteudo(`
-  <div id="configTela">
+  if (window.innerWidth <= 730) {
+    // document.getElementById("ConfigDKT").style.display = "none";
+
+    trocarConteudo(`
+  <div class="configTela">
     <h1>Configurações</h1>
     <div id="preferencias">
-      <div id="opcoes">
-        <div class="opcao" onclick="trocarOpcoes(0)">
-          <b>Dados Pessoais</b>
-        </div>
-        <div class="opcao" onclick="trocarOpcoes(1)">
-          <b>Personalização</b>
-        </div>
-        <div class="opcao" onclick="trocarOpcoes(2)">
-          <b>Notificações</b>
-        </div>
-        <div class="opcao" onclick="trocarOpcoes(3)">
-          <b>Segurança</b>
-        </div>
-        <div class="opcao" onclick="trocarOpcoes(4)">
-          <b>Outros</b>
-        </div>
-
-        </div>
       <div id="opcoesTela"></div>
     </div>
     <div id="opcoesCell">
-    <img src="./img/DadosPessoais.png" onclick="trocarOpcoes(0)">
-    <img src="./img/Personalização.png" onclick="trocarOpcoes(1)">
-    <img src="./img/notificacao.png" onclick="trocarOpcoes(2)">
-    <img src="./img/seguranca.png" onclick="trocarOpcoes(3)">
-    <img src="./img/outros.png" onclick="trocarOpcoes(4)">
+      <img src="./img/DadosPessoais.png" onclick="trocarOpcoes(0)" class="opcaoCell">
+      <img src="./img/Personalização.png" onclick="trocarOpcoes(1)" class="opcaoCell">
+      <img src="./img/notificacao.png" onclick="trocarOpcoes(2)" class="opcaoCell">
+      <img src="./img/seguranca.png" onclick="trocarOpcoes(3)" class="opcaoCell">
+      <img src="./img/outros.png" onclick="trocarOpcoes(4)" class="opcaoCell">
     </div>
   </div>`);
+  } else {
+    const ConfigDKT = document.getElementById("configDKT");
+
+    ConfigDKT.style.display = "flex";
+    ConfigDKT.classList.add("fade-inX");
+    setTimeout(() => {
+      ConfigDKT.classList.remove("fade-inX");
+    }, 600);
+
+    document
+      .getElementById("ConfigDKTFechar")
+      .addEventListener("click", function () {
+        ConfigDKT.classList.add("fade-outX");
+
+        setTimeout(() => {
+          ConfigDKT.style.display = "none";
+          ConfigDKT.classList.remove("fade-outX");
+        }, 400);
+      });
+  }
 }
 
 function trocarOpcoes(i) {
+  const opcoes = document.querySelectorAll(".opcao");
+
+  opcoes.forEach((el, index) => {
+    el.classList.toggle("ativo", index === i);
+  });
+  const opcoesCell = document.querySelectorAll(".opcaoCell");
+
+  opcoesCell.forEach((el, index) => {
+    el.classList.toggle("ativoCell", index === i);
+  });
+
   var tela = [
     `
     <h4> Dados Pessoais:</h4>
     <table>
     <tr>
       <td>
-        <label for="Nome">Nome:</label>
+        <label for="NomeEditar">Nome:</label>
       </td>
       <td>
-        <label for="Email">Email:</label><br>
+        <label for="EmailEditar">Email:</label><br>
       </td>
     </tr>
     <tr>
       <td>
-        <input type="text" value="s" id="Nome" disabled/>
+        <input type="text" value="s" id="NomeEditar" disabled/>
       </td>
       <td>
-         <input type="Email" value="@gmail" id="Email" disabled/>
+         <input type="Email" value="@gmail" id="EmailEditar" disabled/>
       </td>
       </table>
       <hr>
@@ -627,10 +648,186 @@ function trocarOpcoes(i) {
       </tr>
     </table>
     `,
-    `<h4 class="outrosBtn" onclick="ajuda()">Central de ajuda</h4><br>
-    <h4 class="outrosBtn" onclick="termos()">Termos de uso e política de privacidade</h4><br>
-    <h4 class="outrosBtn" onclick="versaoSite()">Versão do site</h4>`,
+    `<h4 class="outrosBtn" onclick="trocarOpcoes(5)">Central de ajuda</h4><br>
+    <h4 class="outrosBtn" onclick="trocarOpcoes(6)">Termos de uso e política de privacidade</h4><br>
+    <h4 class="outrosBtn" onclick="trocarOpcoes(7)">Versão do site</h4>`,
+    `
+    
+    
+    `,
+    `<h4> Termos e política de privacidade</h4>
+    
+    <p id="termosTXT">
+    
+<b>1. Introdução</b> <br>
+
+O Infobairro é uma plataforma que tem como objetivo reunir avaliações de usuários sobre bairros, apresentando opiniões, dados e percepções de forma colaborativa.
+Ao utilizar o site, você concorda com os presentes Termos de Uso e com a Política de Privacidade.
+
+2. Termos de Uso <br>
+2.1. Objetivo da Plataforma <br>
+
+O Infobairro permite que usuários consultem, avaliem e compartilhem experiências relacionadas a diferentes bairros, visando ajudar outras pessoas a tomarem decisões mais informadas.
+
+2.2. Precisão das Informações <br>
+
+As informações publicadas na plataforma podem ter sido fornecidas por usuários ou coletadas de fontes públicas.
+<br>
+Não garantimos que os dados sobre os bairros sejam sempre precisos, completos ou atualizados.
+<br>
+A percepção sobre segurança, lazer, transporte, custo de vida ou qualquer outro aspecto pode variar entre pessoas.
+<br>
+2.3. Responsabilidade do Usuário <br>
+
+Ao usar o Infobairro, você se compromete a: <br>
+
+Fornecer informações verdadeiras em suas avaliações. <br>
+
+Não publicar conteúdo ofensivo, discriminatório, ilegal ou que viole direitos de terceiros.
+<br>
+Respeitar a comunidade e os demais usuários.
+<br>
+2.4. Limitação de Responsabilidade<br>
+
+O Infobairro não se responsabiliza por:<br>
+
+Decisões tomadas pelos usuários com base nas informações do site.<br>
+
+Divergências entre opiniões publicadas e a realidade vivenciada.<br>
+
+Eventuais danos ou prejuízos decorrentes do uso da plataforma.<br>
+
+3. Política de Privacidade<br>
+3.1. Coleta de Dados<br>
+
+O Infobairro pode coletar informações pessoais fornecidas voluntariamente, tais como:
+<br>
+Nome e e-mail (quando o usuário cria uma conta ou entra em contato).
+<br>
+Dados de uso, como páginas visitadas, tempo de navegação e interações no site (para fins estatísticos).
+<br>
+3.2. Uso das Informações
+<br>
+Os dados coletados são utilizados para:
+<br>
+Manter a conta do usuário ativa.
+<br>
+Exibir avaliações de forma organizada.
+<br>
+Melhorar a experiência e funcionalidades da plataforma.
+<br>
+Enviar comunicações relevantes (com consentimento do usuário).
+<br>
+3.3. Compartilhamento<br>
+
+O Infobairro não vende nem compartilha dados pessoais com terceiros para fins comerciais.
+<br>
+Dados podem ser compartilhados apenas em casos legais ou mediante ordem judicial.
+<br>
+3.4. Armazenamento e Segurança<br>
+
+Adotamos medidas de segurança para proteger os dados dos usuários contra acessos não autorizados.
+<br>
+O usuário é responsável por manter sua senha em sigilo.
+<br>
+3.5. Direitos do Usuário<br>
+
+Você pode solicitar, a qualquer momento:
+<br>
+Correção ou exclusão de seus dados.
+<br>
+Exclusão de sua conta.
+<br>
+Revogação de consentimento para uso de informações.
+<br>
+4. Alterações nos Termos
+<br>
+O Infobairro pode atualizar esta Política de Privacidade e Termos de Uso periodicamente. Recomendamos que os usuários revisem este documento regularmente.
+<br>
+5. Contato
+<br>
+Para dúvidas, sugestões ou solicitações relacionadas a privacidade, entre em contato: suporte@infobairro.com
+
+    
+    </p>
+    
+    `,``
   ];
+
+  if(i == 5 || i == 6 || i == 7){
+
+    if (window.innerWidth <= 730)
+    opcoesCell[4].classList.add("ativoCell");
+  else
+    opcoes[4].classList.add("ativo");
+  }
+  if (window.innerWidth <= 730) {
+
+    tela[0] = `    
+<h4> Dados Pessoais:</h4>
+  <table>
+    <tr>
+      <td>
+        <label for="NomeEditar">Nome:</label>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input type="text" value="s" id="NomeEditar" disabled style="width=90%"/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="EmailEditar">Email:</label><br>
+      </td>
+    </tr>
+    <tr>
+      <td>
+         <input type="Email" value="@gmail" id="EmailEditar" disabled/>
+      </td>
+    </tr>
+      </table>
+      <hr>
+      <br>
+      <h4>Endereço</h4>
+      
+      <table>
+        <tr>
+          <td>
+            <label for="cepEditar">CEP:</label>
+          </td>
+          <td>
+            <label for="bairroEditar">Bairro:</label>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="number" id="cepEditar" disabled/>
+          </td>
+          <td>
+            <input type="text" id="bairroEditar" disabled/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="ruaEditar">Rua:</label>
+          </td>
+          <td>
+            <label for="cidadeEditar">Cidade:</label>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="text" id="ruaEditar" disabled/>
+          </td>
+          <td>
+            <input type="text" id="cidadeEditar" disabled/>
+          </td>
+        </tr>
+        
+      </table>
+`;
+  }
 
   const telaOpt = document.getElementById("opcoesTela");
 
@@ -656,27 +853,26 @@ function trocarOpcoes(i) {
 }
 
 function togglePrivacidade() {
-  const autToggler = document.getElementById('autToggle');
-  const anonimoToggler = document.getElementById('anonimoToggle');
+  const autToggler = document.getElementById("autToggle");
+  const anonimoToggler = document.getElementById("anonimoToggle");
 
-// Adiciona um "ouvinte de evento" para o clique/mudança de estado
-autToggler.addEventListener('change', function() {
+  // Adiciona um "ouvinte de evento" para o clique/mudança de estado
+  autToggler.addEventListener("change", function () {
     // Verifica se o switch está marcado (ligado)
     if (this.checked) {
-        console.log('Status aut: Ligado');
-      } else {
-      console.log('Status aut: Desligado');
+      console.log("Status aut: Ligado");
+    } else {
+      console.log("Status aut: Desligado");
     }
-});
-anonimoToggler.addEventListener('change', function() {
+  });
+  anonimoToggler.addEventListener("change", function () {
     // Verifica se o switch está marcado (ligado)
     if (this.checked) {
-        console.log('Status anonimo: Ligado');
-      } else {
-      console.log('Status anonimo: Desligado');
+      console.log("Status anonimo: Ligado");
+    } else {
+      console.log("Status anonimo: Desligado");
     }
-});
-  
+  });
 }
 
 // Executa ao carregar a página

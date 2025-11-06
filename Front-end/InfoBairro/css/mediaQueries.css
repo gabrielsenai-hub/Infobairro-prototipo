@@ -179,7 +179,7 @@
   }
 
   .Ilogin {
-    height: max-content;
+    height: 100vh;
     transition: 0.5s;
     z-index: 2;
   }
@@ -210,7 +210,7 @@
   .carrossel1 {
     position: absolute;
     transition: 0.5s;
-    height: 91%;
+    height: 100%;
   }
 
   #carrossel1-1 {
@@ -247,12 +247,14 @@
     left: initial;
     bottom: initial;
   }
-  #opcoes{
+  #opcoes, #configDKT{
     display: none;
+    
   }
   #opcoesCell{
     display: flex;
   }
+
 }
 
 @media (min-width: 731px) {
@@ -266,5 +268,8 @@
     }
     .secao_sobre > .container_ilustracao {
         order: 2; 
+    }
+    #opcoesTela{
+      width: max-content;
     }
 }

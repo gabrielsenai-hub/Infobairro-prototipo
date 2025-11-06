@@ -63,34 +63,37 @@
         </div>
         <div id="itensMinimizados">
           <div id="itensMEsquerda">
-
             <table>
               <tr>
-                <td><img src="./img/lazer.png" class="indicadorMini"></td>
-                <td><img src="./img/transporte.png" class="indicadorMini"></td>
-                <td><img src="./img/seg.png" class="indicadorMini"></td>
+                <td><img src="./img/lazer.png" class="indicadorMini" /></td>
+                <td>
+                  <img src="./img/transporte.png" class="indicadorMini" />
+                </td>
+                <td><img src="./img/seg.png" class="indicadorMini" /></td>
               </tr>
               <tr>
-                <td><img src="./img/educação.png" class="indicadorMini"></td>
-                <td><img src="./img/comércio.png" class="indicadorMini"></td>
-                <td><img src="./img/saúde.png" class="indicadorMini"></td>
+                <td><img src="./img/educação.png" class="indicadorMini" /></td>
+                <td><img src="./img/comércio.png" class="indicadorMini" /></td>
+                <td><img src="./img/saúde.png" class="indicadorMini" /></td>
               </tr>
             </table>
-
           </div>
           <div id="itensMDireita">
-
-            <h4>Ultimo Comentário: </h4>
+            <h4>Ultimo Comentário:</h4>
             <div id="hudUltimoComentario">
-              <span id="ultimoComentario">"Comentário"</span> <br>
-              <span id="ultimoComentarioDono">Anonimo</span> • <span id="ultimoComentarioTempo">há um dia</span>
+              <span id="ultimoComentario">"Comentário"</span> <br />
+              <span id="ultimoComentarioDono">Anonimo</span> •
+              <span id="ultimoComentarioTempo">há um dia</span>
             </div>
 
             <div class="botoesMDireita">
-              <button type="button" id="Botao_Ver_Detalhes">Ver Mais Detalhes</button>
-              <button type="button" id="botaoAvaliarBairro">Avaliar este bairro</button>
+              <button type="button" id="Botao_Ver_Detalhes">
+                Ver Mais Detalhes
+              </button>
+              <button type="button" id="botaoAvaliarBairro">
+                Avaliar este bairro
+              </button>
             </div>
-
           </div>
         </div>
       </div>
@@ -99,6 +102,36 @@
       </div>
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     </section>
+
+    <div id="configDKT">
+      <div class="configTela">
+        <div id="headerConfig">
+          <h1>Configurações</h1>
+          <img src="./img/X.png" id="ConfigDKTFechar"/>
+        </div>
+
+        <div id="preferencias">
+          <div id="opcoes">
+            <div class="opcao" onclick="trocarOpcoes(0)">
+              <b>Dados Pessoais</b>
+            </div>
+            <div class="opcao" onclick="trocarOpcoes(1)">
+              <b>Personalização</b>
+            </div>
+            <div class="opcao" onclick="trocarOpcoes(2)">
+              <b>Notificações</b>
+            </div>
+            <div class="opcao" onclick="trocarOpcoes(3)">
+              <b>Segurança</b>
+            </div>
+            <div class="opcao" onclick="trocarOpcoes(4)">
+              <b>Outros</b>
+            </div>
+          </div>
+          <div id="opcoesTela"></div>
+        </div>
+      </div>
+    </div>
 
     <!-- <div class="hudAvaliacoes">
       <h1></h1>
