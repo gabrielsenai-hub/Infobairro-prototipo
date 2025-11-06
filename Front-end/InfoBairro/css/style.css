@@ -493,6 +493,19 @@ text-align: justify;
 height: 90%;
 width: min-content;
 }
+#versaoSite img{
+
+  height: 200px;
+}
+
+  #versaoSite{
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .switch {
   position: relative;
   display: inline-block;

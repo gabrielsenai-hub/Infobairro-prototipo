@@ -648,13 +648,9 @@ function trocarOpcoes(i) {
       </tr>
     </table>
     `,
-    `<h4 class="outrosBtn" onclick="trocarOpcoes(5)">Central de ajuda</h4><br>
-    <h4 class="outrosBtn" onclick="trocarOpcoes(6)">Termos de uso e política de privacidade</h4><br>
-    <h4 class="outrosBtn" onclick="trocarOpcoes(7)">Versão do site</h4>`,
     `
-    
-    
-    `,
+    <h4 class="outrosBtn" onclick="trocarOpcoes(5)">Termos de uso e política de privacidade</h4><br>
+    <h4 class="outrosBtn" onclick="trocarOpcoes(6)">Versão do site</h4>`,
     `<h4> Termos e política de privacidade</h4>
     
     <p id="termosTXT">
@@ -751,10 +747,16 @@ Para dúvidas, sugestões ou solicitações relacionadas a privacidade, entre em
     
     </p>
     
-    `,``
+    `,
+    `
+    <div id="versaoSite">
+    <img src="./img/Logo.png"/>
+    <h2>Versão: 1.0.0</h2>
+    </div>
+    `
   ];
 
-  if(i == 5 || i == 6 || i == 7){
+  if(i == 5 || i == 6){
 
     if (window.innerWidth <= 730)
     opcoesCell[4].classList.add("ativoCell");
