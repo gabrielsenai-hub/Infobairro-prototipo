@@ -142,7 +142,7 @@ footer p:hover {
   height: max-content;
 }
 .configpop {
-  display: flex;
+  display: none;
   z-index: 1500;
   position: absolute;
 

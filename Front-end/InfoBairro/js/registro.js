@@ -1,54 +1,41 @@
 const erro = localStorage.getItem("Erro");
 const spam1 = localStorage.getItem("Spam1");
 const spam2 = localStorage.getItem("Spam2");
-var user = localStorage.getItem("User");
+const user = JSON.parse(localStorage.getItem("User"));
 console.log(`${erro}\n\n${spam1}\n\n${spam2}`);
 
 async function cadastrar(event) {
-  // Se chamado por onsubmit de um form, previne o reload
-  if (event && event.preventDefault) event.preventDefault();
+  if (event) event.preventDefault();
 
-  // declarar com let para poder reatribuir
-  let nome = "";
-  let email = "";
-  let senha = "";
-  let confirmasenha = "";
-  let cep = "";
-  let bairro = "";
-  let rua = "";
-  let cidade = "";
-  let data_nascimento = "";
+  const mobile = window.innerWidth <= 730;
 
-  // usar if/else fica mais legível
-  if (window.innerWidth <= 730) {
-    nome = document.getElementById("nomeC")?.value.trim() ?? "";
-    email = document.getElementById("emailC")?.value.trim() ?? "";
-    senha = document.getElementById("senhaC")?.value ?? "";
-    confirmasenha = document.getElementById("senhaR")?.value ?? "";
-    cep = document.getElementById("cepC")?.value.trim() ?? "";
-    bairro = document.getElementById("bairroC")?.value.trim() ?? "";
-    rua = document.getElementById("ruaC")?.value.trim() ?? "";
-    cidade = document.getElementById("cidadeC")?.value.trim() ?? "";
-    data_nascimento = document.getElementById("dataNascimentoC")?.value ?? "";
-  } else {
-    nome = document.getElementById("nomeCT")?.value.trim() ?? "";
-    email = document.getElementById("emailCT")?.value.trim() ?? "";
-    senha = document.getElementById("senhaCT")?.value ?? "";
-    confirmasenha = document.getElementById("senhaRT")?.value ?? "";
-    cep = document.getElementById("cepCT")?.value.trim() ?? "";
-    bairro = document.getElementById("bairroCT")?.value.trim() ?? "";
-    rua = document.getElementById("ruaCT")?.value.trim() ?? "";
-    cidade = document.getElementById("cidadeCT")?.value.trim() ?? "";
-    data_nascimento = document.getElementById("dataNascimentoCT")?.value ?? "";
-  }
+  const nome =
+    document.getElementById(mobile ? "nomeC" : "nomeCT")?.value.trim() ?? "";
+  const email =
+    document.getElementById(mobile ? "emailC" : "emailCT")?.value.trim() ?? "";
+  const senha =
+    document.getElementById(mobile ? "senhaC" : "senhaCT")?.value ?? "";
+  const confirmasenha =
+    document.getElementById(mobile ? "senhaR" : "senhaRT")?.value ?? "";
+  const cep =
+    document.getElementById(mobile ? "cepC" : "cepCT")?.value.trim() ?? "";
+  const bairro =
+    document.getElementById(mobile ? "bairroC" : "bairroCT")?.value.trim() ??
+    "";
+  const rua =
+    document.getElementById(mobile ? "ruaC" : "ruaCT")?.value.trim() ?? "";
+  const cidade =
+    document.getElementById(mobile ? "cidadeC" : "cidadeCT")?.value.trim() ??
+    "";
+  const data_nascimento =
+    document.getElementById(mobile ? "dataNascimentoC" : "dataNascimentoCT")
+      ?.value ?? "";
 
-  // validação de senha: interrompe se não bate
   if (senha !== confirmasenha) {
     showAlert("As senhas devem ser iguais", "error", 3000);
     return;
   }
 
-  // montar payload
   const payload = {
     nome,
     email,
@@ -64,40 +51,67 @@ async function cadastrar(event) {
     const res = await fetch("http://localhost:8080/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
       body: JSON.stringify(payload),
     });
 
-    // consumir o corpo uma vez e armazenar de forma segura (texto/obj JSON)
-    const text = await res.text();
-    let body;
+    // tenta ler JSON, se não conseguir usa texto
+    const responseText = await res.text(); // ler uma vez só
+    let responseBody;
+
     try {
-      body = JSON.parse(text);
+      responseBody = JSON.parse(responseText); // tenta decodificar JSON
     } catch {
-      body = text;
+      responseBody = responseText; // se não for JSON, fica como texto
     }
 
-    if (res.ok) {
-      // esconder elementos .acesso
-      const acessos = document.getElementsByClassName("acesso");
-      for (let i = 0; i < acessos.length; i++) {
-        acessos[i].style.display = "none";
-      }
-      showAlert("Cadastro realizado com sucesso", "success", 3000);
-      user = payload;
-      console.log(user);
-      // atualizar UI
-      trocarConteudo(
-        `<div id="map"></div> <div id="admin"> <div class="adminCardOpt" onclick="adminCard()"><img src="./img/botaoLateral.png" style="width: 24px;"></div> <div id="admin-card" class="admin-card hidden"> <div id="card-header"> <img src="./img/botaoLateralAdc.png" style="width: 20px; cursor: pointer;" onclick="adminCard()"> Adicionar Bairro</div> <div id="card-body" class="hidden"> <form onsubmit="salvarBairro()"> <table class="adcBairro" id="formAdcBairro"> <tr> <td> <label>Nome:</label> </td> <td> <input id="bairro-nome" type="text" /> </td> </tr> <tr > <td> <label for="bairro-lat">Latitude:</label> </td> <td> <input id="bairro-lat" type="number" step="any" /> </td> </tr> <tr"> <td> <label for="bairro-lon">Longitude:</label> </td> <td> <input id="bairro-lon" type="number" step="any" /> </td> </tr> </table> <input type="submit" value="Salvar" /> </form> </div> </div> </div>`
-      );
-    } else {
-      // se o servidor retornou erro, mostrar mensagem
-      const mensagem = body && body.message ? body.message : String(body);
-      showAlert(mensagem, "error", 3000);
-      localStorage.setItem("Erro", mensagem);
-    }
+    // sucesso!
+    showAlert("Cadastro realizado com sucesso", "success", 1500);
+
+    // Guarda usuário (opcional)
+    localStorage.setItem("User", JSON.stringify(responseBody));
+
+    // atualiza UI
+    const acessos = document.getElementsByClassName("acesso");
+    for (let item of acessos) item.style.display = "none";
+
+    setTimeout(() => {
+      // trocarConteudo(`
+      //   <div id="map"></div>
+      //   <div id="admin">
+      //     <div class="adminCardOpt" onclick="adminCard()">
+      //       <img src="./img/botaoLateral.png" style="width: 24px;">
+      //     </div>
+      //     <div id="admin-card" class="admin-card hidden">
+      //       <div id="card-header">
+      //         <img src="./img/botaoLateralAdc.png" style="width: 20px; cursor: pointer;" onclick="adminCard()">
+      //         Adicionar Bairro
+      //       </div>
+      //       <div id="card-body" class="hidden">
+      //         <form onsubmit="salvarBairro()">
+      //           <table class="adcBairro" id="formAdcBairro">
+      //             <tr>
+      //               <td><label>Nome:</label></td>
+      //               <td><input id="bairro-nome" type="text"></td>
+      //             </tr>
+      //             <tr>
+      //               <td><label>Latitude:</label></td>
+      //               <td><input id="bairro-lat" type="number" step="any"></td>
+      //             </tr>
+      //             <tr>
+      //               <td><label>Longitude:</label></td>
+      //               <td><input id="bairro-lon" type="number" step="any"></td>
+      //             </tr>
+      //           </table>
+      //           <input type="submit" value="Salvar">
+      //         </form>
+      //       </div>
+      //     </div>
+      //   </div>
+      // `);
+      // document.querySelector("configpop").style.display = "block";
+    window.location.reload();
+    }, 2000);
   } catch (err) {
-    // catch para falhas de rede
     console.error("Erro no fetch:", err);
     showAlert("Erro de rede: " + err.message, "error", 3000);
   }
@@ -464,6 +478,7 @@ function logout() {
   });
 }
 async function verificarLogin() {
+  console.log(user.nome);
   if (user != null) {
     document.querySelector(".loginBtn").style.display = "none";
     document.querySelector(".configpop").style.display = "flex";
@@ -478,7 +493,6 @@ async function verificarLogin() {
 }
 
 function configTela() {
-  trocarOpcoes(0);
   if (window.innerWidth <= 730) {
     // document.getElementById("ConfigDKT").style.display = "none";
 
@@ -517,7 +531,6 @@ function configTela() {
       });
   }
 }
-
 function trocarOpcoes(i) {
   const opcoes = document.querySelectorAll(".opcao");
 
@@ -793,9 +806,9 @@ Para dúvidas, sugestões ou solicitações relacionadas a privacidade, entre em
   if (i == 7) {
     localStorage.removeItem("User");
     showAlert("Realizando logout...", "info", 1500);
-    setTimeout(() =>{
+    setTimeout(() => {
       window.location.reload();
-    }, 2000);
+    }, 1700);
   }
 
   if (i == 5 || i == 6) {
@@ -915,5 +928,4 @@ function togglePrivacidade() {
   });
 }
 
-// Executa ao carregar a página
 window.addEventListener("load", verificarLogin);
