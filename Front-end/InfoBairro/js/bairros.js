@@ -82,7 +82,9 @@ function initMap() {
         console.log(bairro);
         const nomeIcon = L.divIcon({
           className: "nome-bairro", // classe CSS (para estilizar)
-          html: `<button id="bairrosNome" onclick='hudAvaliar(${JSON.stringify(bairro)})'>${bairro.nome}</button>`,
+          html: `<button id="bairrosNome" onclick='hudAvaliar(${JSON.stringify(
+            bairro
+          )})'>${bairro.nome}</button>`,
           iconSize: [100, 20], // tamanho do “bloco” de texto
           iconAnchor: [50, 10], // centraliza o nome na coordenada
         });
@@ -114,7 +116,29 @@ setTimeout(() => {
 var map;
 
 function hudAvaliar(bairro) {
-  
-}
+  const hudMinimizado = document.getElementById("hudMinimizado");
 
+  hudMinimizado.style.display = "flex";
+
+  setTimeout(() => {
+    hudMinimizado.classList.add("fade-inY");
+  }, 50);
+
+  setTimeout(() => {
+    hudMinimizado.classList.remove("fade-inX");
+  }, 600);
+
+  // ... (restante do código: listener de fechar e atualização do título) ...
+
+  document
+    .getElementsByClassName("fechar")[0]
+    .addEventListener("click", function () {
+      hudMinimizado.classList.remove("fade-inY");
+
+      setTimeout(() => {
+        hudMinimizado.style.display = "none";
+      }, 400);
+    });
+  document.getElementsByClassName("titulo_local")[0].innerHTML = bairro.nome;
+}
 initMap();

@@ -99,13 +99,15 @@ footer p:hover {
   justify-content: center;
   align-items: center;
 }
-#configDKT h1 + img:hover {
+#configDKT h1 + img:hover,
+.fechar:hover {
   transition: 0.5s;
   scale: 1.1;
   cursor: pointer;
   background-color: transparent;
 }
-#configDKT h1 + img {
+#configDKT h1 + img,
+.fechar {
   margin-left: 30px;
   position: absolute;
   right: 21px;
@@ -140,12 +142,12 @@ footer p:hover {
   height: max-content;
 }
 .configpop {
+  display: flex;
   z-index: 1500;
   position: absolute;
 
   bottom: 20px;
   left: 30px;
-  display: flex;
   justify-content: center;
   align-items: center;
   height: 40px;
@@ -431,9 +433,16 @@ h4 {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  width: 90%;
+}
+#hudMinimizado,
+.info_Mini,
+#itensMinimizados {
+  gap: 10px;
 }
 #hudMinimizado {
-  display: flex;
+  transition: opacity 0.4s, transform 0.4s;
+  display: none;
   flex-direction: column;
   padding: 10px;
   border: #636262 solid 1px;
@@ -468,14 +477,15 @@ h4 {
   justify-content: center;
   gap: 20px;
 }
-.opcaoCell:hover, .ativoCell {
+.opcaoCell:hover,
+.ativoCell {
   box-shadow: 1px 1px 16px 1px rgb(184, 182, 182);
   transform: translateY(1.5px);
   transition: 0.5s;
   cursor: pointer;
   background-color: #68dd6c56;
 }
-.opcaoCell{
+.opcaoCell {
   transition: 0.5s;
   padding: 5px;
   border: #000000 1px solid;
@@ -483,22 +493,21 @@ h4 {
   height: 30px;
 }
 
-#opcoesTela input[type="checkbox"]+label{
+#opcoesTela input[type="checkbox"] + label {
   width: 200px;
   height: max-content;
   word-break: break-all;
 }
-#termosTXT{
-text-align: justify;
-height: 90%;
-width: min-content;
+#termosTXT {
+  text-align: justify;
+  height: 90%;
+  width: min-content;
 }
-#versaoSite img{
-
+#versaoSite img {
   height: 200px;
 }
 
-  #versaoSite{
+#versaoSite {
   width: fit-content;
   display: flex;
   flex-direction: column;
@@ -519,7 +528,8 @@ width: min-content;
   width: 0;
   height: 0;
 }
-#NomeEditar, #EmailEditar{
+#NomeEditar,
+#EmailEditar {
   width: -webkit-fill-available;
 }
 .slider {

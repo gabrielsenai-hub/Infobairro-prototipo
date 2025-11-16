@@ -1,7 +1,7 @@
 const erro = localStorage.getItem("Erro");
 const spam1 = localStorage.getItem("Spam1");
 const spam2 = localStorage.getItem("Spam2");
-
+var user = localStorage.getItem("User");
 console.log(`${erro}\n\n${spam1}\n\n${spam2}`);
 
 async function cadastrar(event) {
@@ -77,9 +77,6 @@ async function cadastrar(event) {
       body = text;
     }
 
-    // Exemplo de armazenamento: salvar status + body (string)
-    localStorage.setItem("Spam2", JSON.stringify({ status: res.status, body }));
-
     if (res.ok) {
       // esconder elementos .acesso
       const acessos = document.getElementsByClassName("acesso");
@@ -87,7 +84,8 @@ async function cadastrar(event) {
         acessos[i].style.display = "none";
       }
       showAlert("Cadastro realizado com sucesso", "success", 3000);
-
+      user = payload;
+      console.log(user);
       // atualizar UI
       trocarConteudo(
         `<div id="map"></div> <div id="admin"> <div class="adminCardOpt" onclick="adminCard()"><img src="./img/botaoLateral.png" style="width: 24px;"></div> <div id="admin-card" class="admin-card hidden"> <div id="card-header"> <img src="./img/botaoLateralAdc.png" style="width: 20px; cursor: pointer;" onclick="adminCard()"> Adicionar Bairro</div> <div id="card-body" class="hidden"> <form onsubmit="salvarBairro()"> <table class="adcBairro" id="formAdcBairro"> <tr> <td> <label>Nome:</label> </td> <td> <input id="bairro-nome" type="text" /> </td> </tr> <tr > <td> <label for="bairro-lat">Latitude:</label> </td> <td> <input id="bairro-lat" type="number" step="any" /> </td> </tr> <tr"> <td> <label for="bairro-lon">Longitude:</label> </td> <td> <input id="bairro-lon" type="number" step="any" /> </td> </tr> </table> <input type="submit" value="Salvar" /> </form> </div> </div> </div>`
@@ -114,7 +112,6 @@ async function cadastrar(event) {
 //   acessos.style.display = "none";
 
 // }
-
 async function login() {
   const form = document.getElementsByClassName("FormLogin")[0];
   if (!form) return console.error("Form não encontrado: .FormLogin");
@@ -123,19 +120,19 @@ async function login() {
   if (form.dataset.sending === "true") return;
   form.dataset.sending = "true";
 
-  const submitBtn = form.querySelector('[type="submit"]');
+  const submitBtn = form.querySelector(
+    '[type="submit"], button[type="button"], button[type="submit"]'
+  );
   if (submitBtn) submitBtn.disabled = true;
-  let status;
 
+  let status;
   try {
-    // pega valores diretamente (sem FormData)
-    const emailInput = form.querySelector('input[id="email"]');
-    const senhaInput = form.querySelector('input[id="senha"]');
+    const emailInput = form.querySelector("#email");
+    const senhaInput = form.querySelector("#senha");
 
     const email = emailInput ? emailInput.value.trim() : "";
     const senha = senhaInput ? senhaInput.value : "";
 
-    // validação mínima
     if (!email || !senha) {
       showAlert("Preencha email e senha", "info", 2000);
       return;
@@ -149,19 +146,16 @@ async function login() {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      credentials: "include",
+      credentials: "include", // só funciona se o servidor habilitar CORS + credentials
       body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
-      // tenta extrair mensagem JSON, se não der pega texto bruto
       let errMsg = `Erro ${res.status}`;
       try {
         const errJson = await res.json();
         if (errJson) {
-          if (errJson.message) errMsg = errJson.message;
-          else if (errJson.error) errMsg = errJson.error;
-          else errMsg = JSON.stringify(errJson);
+          errMsg = errJson.message || errJson.error || JSON.stringify(errJson);
         }
       } catch (e) {
         const txt = await res.text();
@@ -173,18 +167,19 @@ async function login() {
       return;
     }
 
-    const data = await res.json(); // dados do servidor
-    showAlert("Login realizado!", "success", 1500);
-    for (let i = 0; i < document.getElementsByClassName("acesso").length; i++) {
-      document.getElementsByClassName("acesso")[i].style.display = "none";
-    }
+    const user = await res.json(); // dados do servidor
 
-    // atualiza a UI / puxa dados do usuário
-    if (typeof carregarUsuario === "function") {
-      carregarUsuario();
-    } else {
-      window.location.reload();
-    }
+    showAlert("Login realizado!", "success", 1500);
+    document
+      .querySelectorAll(".acesso")
+      .forEach((el) => (el.style.display = "none"));
+
+    // armazenar corretamente
+    localStorage.setItem("User", JSON.stringify(user));
+
+    // recarregar / redirecionar corretamente
+    window.location.reload();
+    // ou: window.location.href = "/"; // se quiser ir para outra página
   } catch (err) {
     console.error("Erro na requisição de login:", err);
     if (status == 401) showAlert("Senha incorreta!", "error", 3000);
@@ -204,7 +199,59 @@ function cadastrarTela() {
   <div class="ICadastro">
   <div id="carrossel2">
     <div class="conteudo">
-  
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
+        <img src="./img/Casa2.png"/>
     </div>
     </div>
     <div class="telaL">
@@ -361,37 +408,31 @@ function loginTela() {
           <img src="./img/casaRep.png"/> 
           <img src="./img/casaRep.png"/> 
           <img src="./img/casaRep.png"/> 
+          
     </div>
     </div>
     
     <div class="telaL">
     <h3 class="BemVindo" style="font-size: 30px;">Bem-vindo</h3>
-    <form class="FormLogin">
-<table>
-<tr>
-<tr>
-<br>
-<label for="email">Email:</label>
-<input type="email" id="email" placeholder="Insira aqui o seu email" required>
-</tr>
-<tr>
-<br>
-<label for="senha">Senha:</label>
-<input type="password" id="senha" placeholder="Insira aqui a sua senha" required>
-</tr>
-<tr>
-<br>
-<input type="submit" value="Entrar" onclick="login()">
+<form class="FormLogin" id="loginForm">
+  <label for="email">Email:</label>
+  <input type="email" id="email" placeholder="Insira aqui o seu email" required>
 
-</tr>
-</tr>
-</table>
+  <label for="senha">Senha:</label>
+  <input type="password" id="senha" placeholder="Insira aqui a sua senha" required>
 
+  <!-- type="button" para não submeter automaticamente -->
+  <button type="button" onclick="login()" class="submit">Entrar</button>
 </form>
-<button id="loginGoogle" onclick="loginWithGoogle()"><img src="./img/google.png" alt="Google" width="30px" height="30px">Entrar com Google</button>
+
 </div>            
 <div class="carrossel1" id="carrossel1-1">
-<div class="repeticaoCasa1"></div>
+<div class="repeticaoCasa1">
+          <img src="./img/casaRep.png"/> 
+          <img src="./img/casaRep.png"/> 
+          <img src="./img/casaRep.png"/> 
+          <img src="./img/casaRep.png"/> 
+</div>
     </div>
     
 
@@ -423,29 +464,21 @@ function logout() {
   });
 }
 async function verificarLogin() {
-  try {
-    const response = await fetch("http://localhost:8080/auth/status", {
-      method: "GET",
-      credentials: "include", // 🔑 envia cookie JSESSIONID
-    });
-
-    if (!response.ok) throw new Error("Falha ao verificar login");
-
-    const data = await response.json();
-
-    if (data.logado) {
-      console.log("Usuário logado:", data.email);
-      document.querySelector(".loginBtn").style.display = "none";
-    } else {
-      console.log("Usuário não logado");
-      document.querySelector(".loginBtn").style.display = "block";
+  if (user != null) {
+    document.querySelector(".loginBtn").style.display = "none";
+    document.querySelector(".configpop").style.display = "flex";
+    console.log(user);
+    if (user.admin) {
+      adminCard();
     }
-  } catch (err) {
-    console.error("Erro ao verificar login:", err);
+  } else {
+    document.querySelector(".configpop").style.display = "none";
+    document.querySelector(".loginBtn").style.display = "block";
   }
 }
 
 function configTela() {
+  trocarOpcoes(0);
   if (window.innerWidth <= 730) {
     // document.getElementById("ConfigDKT").style.display = "none";
 
@@ -511,10 +544,10 @@ function trocarOpcoes(i) {
     </tr>
     <tr>
       <td>
-        <input type="text" value="s" id="NomeEditar" disabled/>
+        <input type="text" value="${user.nome}" id="NomeEditar" disabled/>
       </td>
       <td>
-         <input type="Email" value="@gmail" id="EmailEditar" disabled/>
+         <input type="Email" value="${user.email}" id="EmailEditar" disabled/>
       </td>
       </table>
       <hr>
@@ -532,10 +565,10 @@ function trocarOpcoes(i) {
         </tr>
         <tr>
           <td>
-            <input type="number" id="cepEditar" disabled/>
+            <input type="number" value="${user.cep}" id="cepEditar" disabled/>
           </td>
           <td>
-            <input type="text" id="bairroEditar" disabled/>
+            <input type="text" id="bairroEditar" value="${user.bairro}" disabled/>
           </td>
         </tr>
         <tr>
@@ -548,10 +581,10 @@ function trocarOpcoes(i) {
         </tr>
         <tr>
           <td>
-            <input type="text" id="ruaEditar" disabled/>
+            <input type="text" value="${user.rua}" id="ruaEditar" disabled/>
           </td>
           <td>
-            <input type="text" id="cidadeEditar" disabled/>
+            <input type="text" value="${user.cidade}" id="cidadeEditar" disabled/>
           </td>
         </tr>
         
@@ -650,7 +683,8 @@ function trocarOpcoes(i) {
     `,
     `
     <h4 class="outrosBtn" onclick="trocarOpcoes(5)">Termos de uso e política de privacidade</h4><br>
-    <h4 class="outrosBtn" onclick="trocarOpcoes(6)">Versão do site</h4>`,
+    <h4 class="outrosBtn" onclick="trocarOpcoes(6)">Versão do site</h4>
+    <h4 class="outrosBtn" onclick="trocarOpcoes(7)">Fazer logout</h4>`,
     `<h4> Termos e política de privacidade</h4>
     
     <p id="termosTXT">
@@ -753,18 +787,22 @@ Para dúvidas, sugestões ou solicitações relacionadas a privacidade, entre em
     <img src="./img/Logo.png"/>
     <h2>Versão: 1.0.0</h2>
     </div>
-    `
+    `,
   ];
 
-  if(i == 5 || i == 6){
+  if (i == 7) {
+    localStorage.removeItem("User");
+    showAlert("Realizando logout...", "info", 1500);
+    setTimeout(() =>{
+      window.location.reload();
+    }, 2000);
+  }
 
-    if (window.innerWidth <= 730)
-    opcoesCell[4].classList.add("ativoCell");
-  else
-    opcoes[4].classList.add("ativo");
+  if (i == 5 || i == 6) {
+    if (window.innerWidth <= 730) opcoesCell[4].classList.add("ativoCell");
+    else opcoes[4].classList.add("ativo");
   }
   if (window.innerWidth <= 730) {
-
     tela[0] = `    
 <h4> Dados Pessoais:</h4>
   <table>

@@ -220,7 +220,7 @@ function sobre() {
 
   document.getElementById("container").style.backgroundColor = "white";
   trocarConteudo(`
-        <main class="conteudo_principal">
+    <main class="conteudo_principal">
         <section class="secao_sobre">
               <div class="container_ilustracao">
                 <img src="../img/imagem_sobre.png" alt="Mapa ilustrativo" class="imagem_mapa">

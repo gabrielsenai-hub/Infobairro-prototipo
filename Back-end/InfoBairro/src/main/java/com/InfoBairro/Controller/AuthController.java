@@ -11,8 +11,9 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 // import org.springframework.security.oauth2.core.user.OAuth2User; // 🔹 OAuth desativado
@@ -22,8 +23,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,18 +37,20 @@ public class AuthController {
     private final EnderecoRepo enderecoRepo;
     private final BairroRepo bairroRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+//    private final AuthenticationManager authenticationManager;
 
     public AuthController(UserRepo userRepo,
                           EnderecoRepo enderecoRepo,
                           BairroRepo bairroRepository,
-                          BCryptPasswordEncoder passwordEncoder,
-                          AuthenticationManager authenticationManager) {
+                          BCryptPasswordEncoder passwordEncoder
+//            ,
+//                          AuthenticationManager authenticationManager
+                          ) {
         this.userRepo = userRepo;
         this.enderecoRepo = enderecoRepo;
         this.bairroRepository = bairroRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
+//        this.authenticationManager = authenticationManager;
     }
 
     // -----------------------
@@ -68,6 +71,16 @@ public class AuthController {
         return bairroRepository.findAll();
     }
 
+    @GetMapping("/findEmail")
+    public ResponseEntity<?> findEmail(@RequestParam String email) {
+        Optional<User> user = userRepo.findByEmail(email);
+
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        } else {
+            return ResponseEntity.status(404).body("Usuário não encontrado");
+        }
+    }
     @GetMapping("/list")
     public List<User> listagem() {
         return userRepo.findAll();
@@ -171,27 +184,27 @@ public class AuthController {
     // -----------------------
     // Status do login
     // -----------------------
-    @GetMapping("/status")
-    public ResponseEntity<?> status(Authentication authentication) {
-        boolean logado = authentication != null && authentication.isAuthenticated();
-        String email = null;
-
-        if (logado) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                email = oauth2User.getAttribute("email");
-            } else if (principal instanceof org.springframework.security.core.userdetails.UserDetails userDetails) {
-                email = userDetails.getUsername();
-            } else if (principal instanceof String) {
-                email = (String) principal;
-            }
-        }
-
-        return ResponseEntity.ok(Map.of(
-                "logado", logado,
-                "email", email
-        ));
-    }
+//    @GetMapping("/status")
+//    public ResponseEntity<?> status(Authentication authentication) {
+//        boolean logado = authentication != null && authentication.isAuthenticated();
+//        String email = null;
+//
+//        if (logado) {
+//            Object principal = authentication.getPrincipal();
+//            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+//                email = oauth2User.getAttribute("email");
+//            } else if (principal instanceof org.springframework.security.core.userdetails.UserDetails userDetails) {
+//                email = userDetails.getUsername();
+//            } else if (principal instanceof String) {
+//                email = (String) principal;
+//            }
+//        }
+//        Map<String, Object> body = new HashMap<>();
+//        body.put("logado", logado);
+//        body.put("email", email); // aceita null tranquilo
+//
+//        return ResponseEntity.ok(body);
+//    }
 
     // -----------------------
     // Usuário autenticado

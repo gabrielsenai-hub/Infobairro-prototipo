@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = "chave_super_secreta_que_voce_troca"; // mude isso!
+    private static final String SECRET_KEY = "chaveSecreta"; // mude isso!
 
     public String gerarToken(String email) {
         long expirationTime = 86400000; // 1 dia em milissegundos
@@ -41,4 +41,5 @@ public class JwtService {
             return false;
         }
     }
+
 }

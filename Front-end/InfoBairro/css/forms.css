@@ -34,7 +34,7 @@ form input:focus {
 }
 
 form button[type="submit"],
-form input[type="submit"] {
+form input[type="submit"], .submit {
   width: 100px;
   padding: 10px;
   border-radius: 8px;
@@ -48,7 +48,7 @@ form input[type="submit"] {
 }
 
 form input[type="submit"]:hover,
-form button[type="submit"]:hover {
+form button[type="submit"]:hover, .submit:hover {
   transform: scale(1.05);
   background: linear-gradient(135deg, #3e8e41, #4caf50);
 }
@@ -138,9 +138,9 @@ form button[type="submit"]:hover {
 .conteudo {
   width: 4500px;
   height: 35px;
-  background-image: url(../img/Casa1.png);
+  /* background-image: url(../img/Casa1.png);
   background-repeat: repeat-x;
-  background-size: 35px;
+  background-size: 35px; */
   animation: deslizaX 10s linear infinite;
 }
 .carrossel1 .conteudo {
@@ -313,6 +313,7 @@ input {
   align-self: flex-end;
   flex-direction: column;
   padding: 2px 10px;
+  width: 24vw;
 }
 #validarDKT {
   text-justify: initial;
