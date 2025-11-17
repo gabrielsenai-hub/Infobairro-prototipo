@@ -45,7 +45,7 @@ public class AuthController {
                           BCryptPasswordEncoder passwordEncoder
 //            ,
 //                          AuthenticationManager authenticationManager
-                          ) {
+    ) {
         this.userRepo = userRepo;
         this.enderecoRepo = enderecoRepo;
         this.bairroRepository = bairroRepository;
@@ -81,6 +81,7 @@ public class AuthController {
             return ResponseEntity.status(404).body("Usuário não encontrado");
         }
     }
+
     @GetMapping("/list")
     public List<User> listagem() {
         return userRepo.findAll();
@@ -116,9 +117,19 @@ public class AuthController {
         if (req.getNome() != null && req.getNome().contains("G93611")) {
             usuario.setAdmin(true);
         }
+        UserResponseDTO response = new UserResponseDTO(
+                usuario.getNome(),
+                usuario.getEmail(),
+                endereco.getRua(),
+                endereco.getBairro(),
+                endereco.getCidade(),
+                endereco.getCep(),
+                usuario.getData_nascimento(),
+                usuario.isAdmin()
+        );
 
         userRepo.save(usuario);
-        return ResponseEntity.status(201).body("Cadastro realizado com sucesso!");
+        return ResponseEntity.ok(response);
     }
 
     JwtService jwtService = new JwtService();
@@ -327,35 +338,98 @@ public class AuthController {
         @JsonAlias({"dataNascimento", "data_nascimento"})
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         private LocalDate data_nascimento;
+
         // getters/setters...
-        public String getNome() { return nome; }
-        public void setNome(String nome) { this.nome = nome; }
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getSenha() { return senha; }
-        public void setSenha(String senha) { this.senha = senha; }
-        public String getRua() { return rua; }
-        public void setRua(String rua) { this.rua = rua; }
-        public String getCep() { return cep; }
-        public void setCep(String cep) { this.cep = cep; }
-        public String getBairro() { return bairro; }
-        public void setBairro(String bairro) { this.bairro = bairro; }
-        public String getCidade() { return cidade; }
-        public void setCidade(String cidade) { this.cidade = cidade; }
-        public LocalDate getData_nascimento() { return data_nascimento; }
-        public void setData_nascimento(LocalDate data_nascimento) { this.data_nascimento = data_nascimento; }
+        public String getNome() {
+            return nome;
+        }
+
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getSenha() {
+            return senha;
+        }
+
+        public void setSenha(String senha) {
+            this.senha = senha;
+        }
+
+        public String getRua() {
+            return rua;
+        }
+
+        public void setRua(String rua) {
+            this.rua = rua;
+        }
+
+        public String getCep() {
+            return cep;
+        }
+
+        public void setCep(String cep) {
+            this.cep = cep;
+        }
+
+        public String getBairro() {
+            return bairro;
+        }
+
+        public void setBairro(String bairro) {
+            this.bairro = bairro;
+        }
+
+        public String getCidade() {
+            return cidade;
+        }
+
+        public void setCidade(String cidade) {
+            this.cidade = cidade;
+        }
+
+        public LocalDate getData_nascimento() {
+            return data_nascimento;
+        }
+
+        public void setData_nascimento(LocalDate data_nascimento) {
+            this.data_nascimento = data_nascimento;
+        }
     }
 
     public static class LoginDTO {
         private String email;
         private String senha;
+
         // getters/setters
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getSenha() { return senha; }
-        public void setSenha(String senha) { this.senha = senha; }
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getSenha() {
+            return senha;
+        }
+
+        public void setSenha(String senha) {
+            this.senha = senha;
+        }
+
         @Override
-        public String toString() { return "LoginDTO{email='" + email + "'}"; }
+        public String toString() {
+            return "LoginDTO{email='" + email + "'}";
+        }
     }
 
     public static class UserResponseDTO {
@@ -372,34 +446,94 @@ public class AuthController {
 
         public UserResponseDTO(String nome, String email, String rua, String bairro, String cidade,
                                String cep, String foto, LocalDate data_nascimento, boolean admin) {
-            this.nome = nome; this.email = email; this.rua = rua; this.bairro = bairro;
-            this.cidade = cidade; this.cep = cep; this.foto = foto;
-            this.data_nascimento = data_nascimento; this.admin = admin;
+            this.nome = nome;
+            this.email = email;
+            this.rua = rua;
+            this.bairro = bairro;
+            this.cidade = cidade;
+            this.cep = cep;
+            this.foto = foto;
+            this.data_nascimento = data_nascimento;
+            this.admin = admin;
         }
 
         public UserResponseDTO(String nome, String email, String rua, String bairro, String cidade,
                                String cep, LocalDate data_nascimento, boolean admin) {
             this(nome, email, rua, bairro, cidade, cep, null, data_nascimento, admin);
         }
+
         // getters/setters...
-        public String getNome() { return nome; }
-        public void setNome(String nome) { this.nome = nome; }
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getRua() { return rua; }
-        public void setRua(String rua) { this.rua = rua; }
-        public String getBairro() { return bairro; }
-        public void setBairro(String bairro) { this.bairro = bairro; }
-        public String getCidade() { return cidade; }
-        public void setCidade(String cidade) { this.cidade = cidade; }
-        public String getCep() { return cep; }
-        public void setCep(String cep) { this.cep = cep; }
-        public LocalDate getData_nascimento() { return data_nascimento; }
-        public void setData_nascimento(LocalDate data_nascimento) { this.data_nascimento = data_nascimento; }
-        public String getFoto() { return foto; }
-        public void setFoto(String foto) { this.foto = foto; }
-        public boolean isAdmin() { return admin; }
-        public void setAdmin(boolean admin) { this.admin = admin; }
+        public String getNome() {
+            return nome;
+        }
+
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getRua() {
+            return rua;
+        }
+
+        public void setRua(String rua) {
+            this.rua = rua;
+        }
+
+        public String getBairro() {
+            return bairro;
+        }
+
+        public void setBairro(String bairro) {
+            this.bairro = bairro;
+        }
+
+        public String getCidade() {
+            return cidade;
+        }
+
+        public void setCidade(String cidade) {
+            this.cidade = cidade;
+        }
+
+        public String getCep() {
+            return cep;
+        }
+
+        public void setCep(String cep) {
+            this.cep = cep;
+        }
+
+        public LocalDate getData_nascimento() {
+            return data_nascimento;
+        }
+
+        public void setData_nascimento(LocalDate data_nascimento) {
+            this.data_nascimento = data_nascimento;
+        }
+
+        public String getFoto() {
+            return foto;
+        }
+
+        public void setFoto(String foto) {
+            this.foto = foto;
+        }
+
+        public boolean isAdmin() {
+            return admin;
+        }
+
+        public void setAdmin(boolean admin) {
+            this.admin = admin;
+        }
     }
 
     public static class ComplementoDTO {
@@ -410,16 +544,46 @@ public class AuthController {
         @JsonAlias({"dataNascimento", "data_nascimento"})
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         private LocalDate data_nascimento;
+
         // getters/setters...
-        public String getRua() { return rua; }
-        public void setRua(String rua) { this.rua = rua; }
-        public String getBairro() { return bairro; }
-        public void setBairro(String bairro) { this.bairro = bairro; }
-        public String getCidade() { return cidade; }
-        public void setCidade(String cidade) { this.cidade = cidade; }
-        public String getCep() { return cep; }
-        public void setCep(String cep) { this.cep = cep; }
-        public LocalDate getData_nascimento() { return data_nascimento; }
-        public void setData_nascimento(LocalDate data_nascimento) { this.data_nascimento = data_nascimento; }
+        public String getRua() {
+            return rua;
+        }
+
+        public void setRua(String rua) {
+            this.rua = rua;
+        }
+
+        public String getBairro() {
+            return bairro;
+        }
+
+        public void setBairro(String bairro) {
+            this.bairro = bairro;
+        }
+
+        public String getCidade() {
+            return cidade;
+        }
+
+        public void setCidade(String cidade) {
+            this.cidade = cidade;
+        }
+
+        public String getCep() {
+            return cep;
+        }
+
+        public void setCep(String cep) {
+            this.cep = cep;
+        }
+
+        public LocalDate getData_nascimento() {
+            return data_nascimento;
+        }
+
+        public void setData_nascimento(LocalDate data_nascimento) {
+            this.data_nascimento = data_nascimento;
+        }
     }
 }

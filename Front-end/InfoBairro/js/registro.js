@@ -54,63 +54,20 @@ async function cadastrar(event) {
       body: JSON.stringify(payload),
     });
 
-    // tenta ler JSON, se não conseguir usa texto
-    const responseText = await res.text(); // ler uma vez só
-    let responseBody;
+    if (res.ok) {
+      const body = await res.json();
 
-    try {
-      responseBody = JSON.parse(responseText); // tenta decodificar JSON
-    } catch {
-      responseBody = responseText; // se não for JSON, fica como texto
+      localStorage.setItem("User", JSON.stringify(body));
+
+      showAlert("Cadastro realizado com sucesso", "success", 1500);
+
+      const acessos = document.getElementsByClassName("acesso");
+      for (let item of acessos) item.style.display = "none";
+      console.log(body);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1700);
     }
-
-    // sucesso!
-    showAlert("Cadastro realizado com sucesso", "success", 1500);
-
-    // Guarda usuário (opcional)
-    localStorage.setItem("User", JSON.stringify(responseBody));
-
-    // atualiza UI
-    const acessos = document.getElementsByClassName("acesso");
-    for (let item of acessos) item.style.display = "none";
-
-    setTimeout(() => {
-      // trocarConteudo(`
-      //   <div id="map"></div>
-      //   <div id="admin">
-      //     <div class="adminCardOpt" onclick="adminCard()">
-      //       <img src="./img/botaoLateral.png" style="width: 24px;">
-      //     </div>
-      //     <div id="admin-card" class="admin-card hidden">
-      //       <div id="card-header">
-      //         <img src="./img/botaoLateralAdc.png" style="width: 20px; cursor: pointer;" onclick="adminCard()">
-      //         Adicionar Bairro
-      //       </div>
-      //       <div id="card-body" class="hidden">
-      //         <form onsubmit="salvarBairro()">
-      //           <table class="adcBairro" id="formAdcBairro">
-      //             <tr>
-      //               <td><label>Nome:</label></td>
-      //               <td><input id="bairro-nome" type="text"></td>
-      //             </tr>
-      //             <tr>
-      //               <td><label>Latitude:</label></td>
-      //               <td><input id="bairro-lat" type="number" step="any"></td>
-      //             </tr>
-      //             <tr>
-      //               <td><label>Longitude:</label></td>
-      //               <td><input id="bairro-lon" type="number" step="any"></td>
-      //             </tr>
-      //           </table>
-      //           <input type="submit" value="Salvar">
-      //         </form>
-      //       </div>
-      //     </div>
-      //   </div>
-      // `);
-      // document.querySelector("configpop").style.display = "block";
-    window.location.reload();
-    }, 2000);
   } catch (err) {
     console.error("Erro no fetch:", err);
     showAlert("Erro de rede: " + err.message, "error", 3000);
